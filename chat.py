@@ -4,50 +4,24 @@ import cohere
 
 cohere_api_key = os.getenv("COHERE_KEY")
 co = cohere.Client(cohere_api_key)
-chatbotSession= False
-current_channel= None
 
-@commands.command(name="startai")
+chat_channels= set()
+
+@commands.command(name="ai")
 async def start_chat_bot(ctx):
-    global chatbotSession
-    global current_channel
-    if chatbotSession and  ctx.channel.id is not current_channel:
-        
-        embed = discord.Embed(
-                title=f"Session already running at <#{current_channel}>" ,
-                color=discord.Color.from_rgb(20, 20, 20)
-        )
-        await ctx.send(embed= embed)
-        return 
-    
-    elif chatbotSession and current_channel == ctx.channel.id :  
-        chatbotSession= False
-        current_channel= None
-        embed = discord.Embed(
-                title="AI Bot session stopped!!",
-                color=discord.Color.from_rgb(0, 0, 0)
-        )
-        await ctx.send(embed= embed)
-        return
-        
-    
-
-    chatbotSession= True
-    current_channel= ctx.channel.id
-    print(current_channel)
-    embed = discord.Embed(
-                title="AI Bot session is running..",
-                color=discord.Color.from_rgb(255, 255, 255)
-        )
-    await ctx.send(embed= embed)
+    global chat_channels
+    if(ctx.channel.id not in chat_channels):
+        chat_channels.add(ctx.channel.id)
+    else:
+        chat_channels.remove(ctx.channel.id)
+    await ctx.send("Started in this channel")
     
 
 
 async def chatbot(message, bot):
-    global chatbotSession
-    global current_channel
-    print(current_channel)
-    if chatbotSession and message.channel.id == current_channel:
+    global chat_channels
+
+    if message.channel.id in chat_channels:
         try:
             if message.author.bot:
                 return
