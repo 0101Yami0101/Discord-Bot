@@ -3,6 +3,7 @@ from discord.ext import commands
 import os
 from chat import *
 from translate import *
+from Moderation import profanity_check 
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -16,6 +17,10 @@ bot.add_command(start_translate)
 bot.add_command(start_chat_bot)
 
 # Wrappers
+async def profanity_wrapper(message):
+
+    await profanity_check.profanity_checker(message)
+
 async def on_message_wrapper(message):
     await on_message_translate(message, bot)
 
@@ -24,6 +29,7 @@ async def chatbot_wrapper(message):
 
 
 # Events and Handlers
+bot.add_listener(profanity_wrapper, 'on_message')
 bot.add_listener(chatbot_wrapper, 'on_message')
 bot.add_listener(on_message_wrapper, 'on_message')
 
