@@ -11,7 +11,6 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 
 # Custom commands
-# bot.add_command(chatbot)
 bot.add_command(translate)
 bot.add_command(start_translate)
 bot.add_command(start_chat_bot)
