@@ -3,7 +3,7 @@ from langdetect import detect
 from deep_translator import GoogleTranslator
 import discord
 
-translationSession= False
+translate_channels= set()
 
 def language_detector(text):
     detected = detect(text)
@@ -13,16 +13,21 @@ def translate_to_english(text, target_language='en'):
     translated = GoogleTranslator(source='auto', target=target_language).translate(text)
     return translated
 
-@commands.command(name="tt")
+@commands.command(name="ttt")
 async def translate(ctx, *, message: str):
     translated_Data = translate_to_english(message)
+    embed = discord.Embed(
+        title="Translation",
+        description=translated_Data,
+        color=discord.Color.green()  
+    )
     await ctx.send(translated_Data)
 
-@commands.command(name="starttr")
+@commands.command(name="translate")
 async def start_translate(ctx):
-    global translationSession
-    if(translationSession):
-        translationSession= False
+    global translate_channels
+    if(ctx.channel.id in translate_channels):
+        translate_channels.remove(ctx.channel.id)
 
         #embed object
         embed = discord.Embed(
@@ -31,7 +36,7 @@ async def start_translate(ctx):
         )
         await ctx.send(embed= embed)
     else:
-        translationSession= True
+        translate_channels.add(ctx.channel.id)
         embed = discord.Embed(
         title="Translation session started !!",
         color=discord.Color.green()  
@@ -41,29 +46,28 @@ async def start_translate(ctx):
 
 #handler
 async def on_message_translate(message, bot):
-    global translationSession
+    global translate_channels
 
-    if translationSession:
+    if message.channel.id in translate_channels:
         if message.author.bot:
             return
         
         if message.content.startswith('!'):        
             return
 
-        if message.channel.id == 1113450097808773241:  #Only readInfo channel for now
-            try:
-                detected_lang = language_detector(message.content)
-                if detected_lang != 'en':
-                    translated_Data = translate_to_english(message.content)
-                    embed = discord.Embed(
-                        title="Translation",
-                        description=translated_Data,
-                        color=discord.Color.yellow()  
-                        )
-                    await message.channel.send(embed=embed)
-                else:
-                    print("English")
-            except Exception as e:
-                print(f"Error detecting language: {e}")
+        
+        try:
+            detected_lang = language_detector(message.content)
+            if detected_lang != 'en':
+                translated_Data = translate_to_english(message.content)
+                embed = discord.Embed(
+                    title="Translation",
+                    description=translated_Data,
+                    color=discord.Color.yellow()  
+                    )
+                await message.channel.send(embed=embed)
+            
+        except Exception as e:
+            print(f"Error detecting language: {e}")
 
         await bot.process_commands(message)

@@ -12,9 +12,19 @@ async def start_chat_bot(ctx):
     global chat_channels
     if(ctx.channel.id not in chat_channels):
         chat_channels.add(ctx.channel.id)
+        embed = discord.Embed(
+                title="AI Chatbot Started",
+                color=discord.Color.green() 
+            )
+        embed.set_image(url="https://img.freepik.com/free-vector/robotic-artificial-intelligence-technology-smart-lerning-from-bigdata_1150-48136.jpg?t=st=1723949221~exp=1723952821~hmac=49bc247e56f149a5705c5cca9a13571c21a0b344b9651bb155dffe08ab3c8f39&w=996")
+        await ctx.send(embed= embed)
     else:
         chat_channels.remove(ctx.channel.id)
-    await ctx.send("Started in this channel")
+        embed = discord.Embed(
+                title="AI Chatbot Stopped",
+                color=discord.Color.dark_grey() 
+            )
+        await ctx.send(embed= embed)
     
 
 
