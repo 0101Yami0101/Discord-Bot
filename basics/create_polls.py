@@ -10,13 +10,13 @@ async def poll(ctx):
         return msg.author == ctx.author and msg.channel == ctx.channel
     
     try:
-        # Get the poll question
+        #poll question
         question_msg = await ctx.bot.wait_for('message', timeout=60.0, check=check)
         question = question_msg.content
         
         await ctx.send("Now enter the poll options separated by commas (e.g., option1, option2, option3):")
         
-        # Get the poll options
+        #poll options
         options_msg = await ctx.bot.wait_for('message', timeout=60.0, check=check)
         options = options_msg.content.split(',')
         options = [option.strip() for option in options if option.strip()]
@@ -29,21 +29,18 @@ async def poll(ctx):
             await ctx.send("You can only have up to 9 options for the poll.")
             return
         
-        # Create poll embed
+
         embed = discord.Embed(title=question, description='\n'.join([f"{chr(97+i)}: {option}" for i, option in enumerate(options)]), color=discord.Color.blue())
-        
-        # Send the poll message
+
         poll_message = await ctx.send(embed=embed)
         
-        # Unicode emojis for reactions
         emoji_list = ['🇦', '🇧', '🇨', '🇩', '🇪', '🇫', '🇬', '🇭', '🇮']
-        
-        # Add reaction emojis
+
         for i in range(len(options)):
             emoji = emoji_list[i]  # Use Unicode emojis
             await poll_message.add_reaction(emoji)
         
-        # Provide confirmation message
+
         await ctx.send("React with the corresponding emojis to vote.")
     
     except asyncio.TimeoutError:
