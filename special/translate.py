@@ -21,7 +21,7 @@ async def translate(ctx, *, message: str):
         description=translated_Data,
         color=discord.Color.green()  
     )
-    await ctx.send(translated_Data)
+    await ctx.send(embed= embed)
 
 @commands.command(name="translate")
 async def start_translate(ctx):

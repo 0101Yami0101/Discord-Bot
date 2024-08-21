@@ -39,6 +39,13 @@ async def chatbot(message, bot):
             if message.content.startswith('!'):        
                 return
             
+            # Send a loading message
+            temPembed = discord.Embed(
+                description="Generating response...",
+                color=discord.Color.green() 
+            )
+            loading_message = await message.channel.send(embed= temPembed)
+
             response = co.generate(
                 model='command-xlarge-nightly',  
                 prompt=message.content,
@@ -53,7 +60,8 @@ async def chatbot(message, bot):
             )
             embed.set_thumbnail(url="https://img.freepik.com/free-vector/robotic-artificial-intelligence-technology-smart-lerning-from-bigdata_1150-48136.jpg?t=st=1723949221~exp=1723952821~hmac=49bc247e56f149a5705c5cca9a13571c21a0b344b9651bb155dffe08ab3c8f39&w=996")
 
-            await message.channel.send(embed= embed)
+            # await message.channel.send(embed= embed)
+            await loading_message.edit(embed=embed)
         
         except Exception as e:
 
