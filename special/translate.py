@@ -13,7 +13,7 @@ def translate_to_english(text, target_language='en'):
     translated = GoogleTranslator(source='auto', target=target_language).translate(text)
     return translated
 
-@commands.command(name="ttt")
+@commands.command(name="ttt", help="!ttt <text>")
 async def translate(ctx, *, message: str):
     translated_Data = translate_to_english(message)
     embed = discord.Embed(

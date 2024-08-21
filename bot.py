@@ -4,7 +4,7 @@ from discord.ext import commands
 from Moderation import modinit, profanity_check 
 from special.chat import *
 from special.translate import *
-from basics import welcome_goodbye
+from basics import welcome_goodbye, create_polls
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -17,7 +17,8 @@ commands = [
     translate,
     start_translate,
     start_chat_bot,
-    modinit.moderation
+    modinit.moderation,
+    create_polls.poll
 ]
 for command in commands:
     bot.add_command(command)
