@@ -15,6 +15,8 @@ async def create_ticket_channel(ctx):
 
 
 async def on_ticket_button_interaction(interaction):
+
+    #Open Ticket
     if interaction.data["custom_id"] == "open_ticket":
         author = interaction.user
         guild = interaction.guild
@@ -34,10 +36,10 @@ async def on_ticket_button_interaction(interaction):
             slowmode_delay=0  # No slowmode
         )
 
-        print(ticket_thread)
-        print(type(ticket_thread))
+       
         
-        # await ticket_thread.edit(name="Banana")
+        # await ticket_thread.edit(name="Banana"
+
         admin_role = discord.utils.get(interaction.guild.roles, name="Admin")
         if admin_role:
             
@@ -54,9 +56,32 @@ async def on_ticket_button_interaction(interaction):
         else:
             print("Admin role not found")
 
-
-        await ticket_thread.send(f'{author.mention}, your ticket has been created! Please describe your issue.')
+        await add_close_button(thread= ticket_thread, author= author)
         await interaction.response.send_message(f'{author.mention}, your ticket has been created: {ticket_thread.mention}', ephemeral=True) #ack
 
 
+    #Close ticket
+    elif interaction.data["custom_id"] == "close_ticket":
+        author = interaction.user
+        guild = interaction.guild
+        channel = interaction.channel
+        ticket_thread = discord.utils.get(guild.threads, name=f'ticket-{author.name.lower()}')
+        
+        if ticket_thread:
+            await ticket_thread.delete()
+            await interaction.response.send_message(f'Your ticket has been closed.', ephemeral=True) #ack
+        else:
+            await interaction.response.send_message(f'No open ticket found to close.', ephemeral=True) #ack
 
+
+
+
+
+async def add_close_button(thread, author):
+    embed = discord.Embed(title="Your Ticket", description="Click the button below to close your ticket.", color=0xE74C3C)
+    button = Button(label="Close", style=discord.ButtonStyle.red, custom_id="close_ticket")
+    view = View()
+    view.add_item(button)
+    await thread.send(f'{author.mention}, your ticket has been created! Please describe your issue.', embed= embed, view= view)
+
+#Send delete thread button -> can be done by admin only ! delete thread
