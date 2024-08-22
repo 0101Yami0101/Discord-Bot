@@ -1,10 +1,11 @@
 import os
 import discord
+from discord.interactions import Interaction
 from discord.ext import commands
 from Moderation import modinit, profanity_check 
 from special.chat import *
 from special.translate import *
-from basics import welcome_goodbye, create_polls
+from basics import welcome_goodbye, create_polls, tickets
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -18,7 +19,8 @@ commands = [
     start_translate,
     start_chat_bot,
     modinit.moderation,
-    create_polls.poll
+    create_polls.poll,
+    tickets.create_ticket_channel
 ]
 for command in commands:
     bot.add_command(command)
@@ -39,6 +41,8 @@ async def welcomeWrapper(member):
 async def goodbyeWrapper(member):
     await welcome_goodbye.goodbye_on_remove(member= member, bot= bot)
 
+async def ticketOpenWrapper(Interaction):
+    await tickets.on_ticket_button_interaction(interaction=Interaction)
 
 # Add handlers to events
 bot.add_listener(profanity_wrapper, 'on_message')
@@ -46,8 +50,7 @@ bot.add_listener(chatbot_wrapper, 'on_message')
 bot.add_listener(on_message_wrapper, 'on_message')
 bot.add_listener(welcomeWrapper, 'on_member_join')
 bot.add_listener(goodbyeWrapper, 'on_member_remove')
-
-
+bot.add_listener(ticketOpenWrapper, 'on_interaction')
 
 # System commands
 @bot.event
