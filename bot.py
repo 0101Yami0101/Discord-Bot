@@ -79,5 +79,5 @@ async def avatar(ctx, member: discord.Member = None):
 
 
 
-
+# run bot
 bot.run(os.getenv('DISCORD_TOKEN'))

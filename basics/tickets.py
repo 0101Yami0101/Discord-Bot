@@ -22,66 +22,75 @@ async def on_ticket_button_interaction(interaction):
         guild = interaction.guild
         channel = interaction.channel
 
-        # Check if a ticket thread already exists
+        # Check if already exists for the user
         existing_thread = discord.utils.get(guild.threads, name=f'ticket-{author.name.lower()}')
         if existing_thread:
             await interaction.response.send_message(f'{author.mention}, you already have an open ticket: {existing_thread.mention}', ephemeral=True)
             return
         
-        # Create a new ticket thread
+        # Create new
         ticket_thread = await channel.create_thread(
             name=f'ticket-{author.name.lower()}',
-            auto_archive_duration=1440,  # Duration for auto archiving the thread (24 hours)
-            invitable=False,  # Make the thread private
-            slowmode_delay=0  # No slowmode
+            auto_archive_duration=1440,  
+            invitable= False,
+            slowmode_delay=0
         )
 
-       
+        await ticket_thread.add_user(author)#add user to thread
+        await interaction.response.send_message(f'{author.mention}, Your Ticket Is Created -> {ticket_thread.mention} ', ephemeral=True) #ack
+
         
-        # await ticket_thread.edit(name="Banana"
+        embed = discord.Embed(title="Your Ticket", description=f"Click the button below to close or delete your ticket.", color=0xE74C3C)
+        await ticket_thread.send(embed= embed)       
+        await add_delete_and_close_button(thread= ticket_thread, author= author)
+        
 
-        admin_role = discord.utils.get(interaction.guild.roles, name="Admin")
-        if admin_role:
-            
-            admin_permissions = ticket_thread.permissions_for(admin_role)
-
-            
-            admin_permissions.send_tts_messages = True
-            admin_permissions.mention_everyone = True
-            admin_permissions.embed_links = True
-            admin_permissions.attach_files = True
-            admin_permissions.read_messages = True
-
-           
-        else:
-            print("Admin role not found")
-
-        await add_close_button(thread= ticket_thread, author= author)
-        await interaction.response.send_message(f'{author.mention}, your ticket has been created: {ticket_thread.mention}', ephemeral=True) #ack
-
+    #Delete ticket
+    elif interaction.data["custom_id"] == "delete_ticket":
+        author = interaction.user
+        guild = interaction.guild
+        channel = interaction.channel
+        ticket_thread = discord.utils.get(guild.threads, id= channel.id )
+        
+        if ticket_thread:
+            await ticket_thread.delete()
 
     #Close ticket
     elif interaction.data["custom_id"] == "close_ticket":
         author = interaction.user
         guild = interaction.guild
         channel = interaction.channel
-        ticket_thread = discord.utils.get(guild.threads, name=f'ticket-{author.name.lower()}')
+
+
+        ticket_thread = discord.utils.get(guild.threads, id= channel.id )
         
         if ticket_thread:
-            await ticket_thread.delete()
-            await interaction.response.send_message(f'Your ticket has been closed.', ephemeral=True) #ack
+            await interaction.response.send_message(f'{author.mention} closed this ticket. Bye!')
+            await ticket_thread.edit(archived= True,locked= True)
+        
         else:
-            await interaction.response.send_message(f'No open ticket found to close.', ephemeral=True) #ack
+            await channel.send(f'You can not close this channel!')
 
 
+async def add_delete_and_close_button(thread, author):
 
-
-
-async def add_close_button(thread, author):
-    embed = discord.Embed(title="Your Ticket", description="Click the button below to close your ticket.", color=0xE74C3C)
-    button = Button(label="Close", style=discord.ButtonStyle.red, custom_id="close_ticket")
+    closeButton = Button(label="Close", style=discord.ButtonStyle.grey, custom_id="close_ticket")
+    delButton = Button(label="Delete", style=discord.ButtonStyle.red, custom_id="delete_ticket")
     view = View()
-    view.add_item(button)
-    await thread.send(f'{author.mention}, your ticket has been created! Please describe your issue.', embed= embed, view= view)
+    view.add_item(closeButton)
+    view.add_item(delButton)
+    await thread.send(view= view)
+    await thread.send(author.mention)
 
-#Send delete thread button -> can be done by admin only ! delete thread
+
+
+
+# Helper/
+# def print_enabled_permissions(permissions):
+#   
+#     all_permissions = [perm for perm in dir(permissions) if isinstance(getattr(permissions, perm), bool)]
+#     enabled_permissions = [perm for perm in all_permissions if getattr(permissions, perm)]
+    
+#     print("Enabled permissions:")
+#     for perm in enabled_permissions:
+#         print(perm)
