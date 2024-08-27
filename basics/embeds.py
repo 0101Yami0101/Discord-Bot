@@ -55,11 +55,8 @@ class EmbedModal(discord.ui.Modal, title='Embed'):
         view = View()
         view.add_item(add_img)
         view.add_item(skip)
-
         
         await interaction.response.send_message('Add an image?', ephemeral=True, delete_after=10)
-        
-        # Use followup.send to get the message reference
         interaction_buttons = await interaction.followup.send(view=view, ephemeral=True)
 
     async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
@@ -70,9 +67,9 @@ class EmbedModal(discord.ui.Modal, title='Embed'):
 @commands.command(name="embed", description="Create Embed")
 async def create_embed(ctx):
     await ctx.message.delete()
-    button = Button(label="Create Embed", style=discord.ButtonStyle.red, custom_id="create_embed")
+    create_button = Button(label="Create Embed", style=discord.ButtonStyle.red, custom_id="create_embed")
     view = View()
-    view.add_item(button)
+    view.add_item(create_button)
     await ctx.channel.send("Click the button to create a custom embed", view=view)
 
 
@@ -91,7 +88,7 @@ async def on_buttons_interaction(interaction):
     elif interaction.data["custom_id"] == "add_image":
         if user_id in user_modals and user_modals[user_id] is not None:
             user_modals[user_id].creatorTracker = interaction.user.id
-            await interaction_buttons.delete()
+            await interaction_buttons.delete() #Remove buttons
             await interaction.response.send_message("Upload an image from your system", ephemeral=True, delete_after=30)
         else:
             await interaction.response.send_message("No active modal found. Please try creating a new embed.", ephemeral=True, delete_after=20)
@@ -105,7 +102,7 @@ async def on_buttons_interaction(interaction):
         if embed:
             # SEND EMBED
             await interaction.channel.send(embed=embed)
-            await interaction_buttons.delete()
+            await interaction_buttons.delete() #Remove buttons
             user_modals[user_id] = None  # Reset modal for user
             return
         else:
