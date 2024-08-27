@@ -79,6 +79,9 @@ async def on_buttons_interaction(interaction):
 
     user_id = interaction.user.id
 
+    if "custom_id" not in interaction.data: #To ignore app_command interactions
+        return
+
     if interaction.data["custom_id"] == "create_embed":  
         modal = EmbedModal(user_id=user_id)
         user_modals[user_id] = modal

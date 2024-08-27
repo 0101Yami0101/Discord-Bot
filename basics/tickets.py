@@ -14,8 +14,12 @@ async def create_ticket_channel(ctx):
     await ctx.send(embed=embed, view=view)
 
 
+
 async def on_ticket_button_interaction(interaction):
 
+    if "custom_id" not in interaction.data: #To ignore app_command interactions
+        return
+    
     #Open Ticket
     if interaction.data["custom_id"] == "open_ticket":
         author = interaction.user
@@ -38,8 +42,7 @@ async def on_ticket_button_interaction(interaction):
 
         await ticket_thread.add_user(author)#add user to thread
         await interaction.response.send_message(f'{author.mention}, Your Ticket Is Created -> {ticket_thread.mention} ', ephemeral=True) #ack
-
-        
+       
         embed = discord.Embed(title="Your Ticket", description=f"Click the button below to close or delete your ticket.", color=0xE74C3C)
         await ticket_thread.send(embed= embed)       
         await add_delete_and_close_button(thread= ticket_thread, author= author)
