@@ -5,7 +5,7 @@ from discord.ext import commands
 from Moderation import modinit, profanity_check 
 from special.chat import *
 from special.translate import *
-from basics import system, welcome_goodbye, create_polls, tickets, embeds
+from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -29,12 +29,18 @@ for command in commands:
 
 
 # App_commands
+app_commands= [
+    system.info,
+    system.avatar,
+    reminder.set_reminder
+
+]
 
 async def register_app_commands():  
-    
-    bot.tree.add_command(system.info)
-    bot.tree.add_command(system.avatar)
 
+    for command in app_commands:   
+        bot.tree.add_command(command)
+       
     await bot.tree.sync()
 
 
