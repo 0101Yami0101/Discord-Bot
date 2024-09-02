@@ -5,7 +5,7 @@ from discord.ext import commands
 from Moderation import modinit, profanity_check 
 from special.chat import *
 from special.translate import *
-from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds
+from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -13,7 +13,8 @@ intents.members = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 
-# Custom commands (names)
+#Add Custom commands (names)
+#Default type ( ! )
 commands = [
     translate,
     start_translate,
@@ -28,11 +29,12 @@ for command in commands:
     bot.add_command(command)
 
 
-# App_commands
+# App_commands (Slash commands)
 app_commands= [
     system.info,
     system.avatar,
-    reminder.set_reminder
+    reminder.set_reminder,
+    reaction_roles.reaction
 
 ]
 
