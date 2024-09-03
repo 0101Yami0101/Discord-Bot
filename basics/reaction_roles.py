@@ -93,6 +93,7 @@ class ReactionRoleModal(discord.ui.Modal, title="Create Reaction Roles"):
 
                     if role:
                         if not stop_collecting:
+                            #BEFORE ADDING THE PAIRS CHECK IF BOT HAS NECESSARY PERMISSIONS TO ASSIGN THIS ROLE
                             pairs[emoji] = role
                             await interaction.followup.send(f"Added: {role_mention} with {emoji}", ephemeral=True)
                     else:
@@ -113,6 +114,49 @@ async def reaction(interaction: discord.Interaction):
     role_modal = ReactionRoleModal()  # Startup modal with empty fields
     await interaction.response.send_modal(role_modal)
 
-# CREATE EVENT LISTENER TO ASSIGN ROLES TO USERS THAT REACT
-#############################################################
 
+#Cog for Reaction Roles
+class ReactionRolesCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        #role pairs and embed msg id
+        self.bot.reaction_role_message_id = None
+        self.bot.reaction_role_pairs = {}
+
+    # Event Listener for Reactions
+    @commands.Cog.listener()
+    async def on_reaction_add(self, reaction, user: discord.User):
+        if user.bot:
+            return  # Ignore bot reactions
+
+        # Check if the reaction is on the correct message
+        if reaction.message.id == self.bot.reaction_role_message_id:
+            print(f'{user.name} reacted with {reaction.emoji}')
+
+            # Get the role associated with the emoji
+            role = self.bot.reaction_role_pairs.get(str(reaction.emoji))
+            
+            # Ensure the role exists
+            if role:
+                # Get the member object for the user
+                guild = reaction.message.guild
+                member = guild.get_member(user.id)
+
+                if member:
+                    try:
+                    # Assign the role to the member
+                        await member.add_roles(role)
+                        await reaction.channel.send(f"Assigned role {role.name} to {member.name}")
+                        print(f"Assigned role {role.name} to {member.name} for emoji {reaction.emoji}")
+                    except Exception as e:
+                        print(f"Unassignable {e}")
+                else:
+                    print(f"Member not found for user: {user.name}")
+            else:
+                print(f"No role associated with emoji: {reaction.emoji}")
+
+        
+
+# Add the Cog to the bot
+async def setup(bot):
+    await bot.add_cog(ReactionRolesCog(bot))

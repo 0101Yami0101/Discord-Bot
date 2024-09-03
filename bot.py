@@ -87,6 +87,9 @@ async def on_ready():
     print(f'Logged in as {bot.user}')
     #Register app commands
     await register_app_commands()
+    #Load Cogs
+    await bot.load_extension("basics.reaction_roles")
+
 
 
 
