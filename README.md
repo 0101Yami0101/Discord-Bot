@@ -5,7 +5,6 @@ _Welcome/GoodBye
 -Tickets
 -Embeds
 -Reminders
-->Notifications
 -Moderation
   ->Profanity check
 
