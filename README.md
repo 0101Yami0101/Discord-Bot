@@ -4,5 +4,7 @@ _Welcome/GoodBye
 -Polls
 -Tickets
 -Embeds
+-Reminders
 -Moderation
   ->Profanity check
+
