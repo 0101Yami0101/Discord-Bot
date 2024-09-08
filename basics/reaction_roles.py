@@ -7,6 +7,7 @@ import asyncio
 class ReactionRoleModal(discord.ui.Modal, title="Create Reaction Roles"):
     def __init__(self):
         super().__init__()
+        self.header_interaction= None
 
         # Text input for title and description
         self.title_input = discord.ui.TextInput(
@@ -38,11 +39,15 @@ class ReactionRoleModal(discord.ui.Modal, title="Create Reaction Roles"):
         view = View()
         finish_button = Button(style=ButtonStyle.success, label='Finish', custom_id='finish')
         view.add_item(finish_button)
+        self.header_interaction= interaction
 
+
+        # Finish Button callback
         # Finish Button callback
         async def finish_button_callback(interaction: discord.Interaction):
             """Callback for when the finish button is clicked."""
             nonlocal stop_collecting
+            nonlocal view
 
             if not pairs:
                 await interaction.response.send_message("Please add at least one role-emoji pair before finishing.", ephemeral=True)
@@ -50,20 +55,24 @@ class ReactionRoleModal(discord.ui.Modal, title="Create Reaction Roles"):
             
             stop_collecting = True 
             embed = discord.Embed(
-                title=self.title,
-                description=self.description + '\n' + '\n'.join(f"React to {emoji} for {role.mention} role" for emoji, role in pairs.items()),
-                color=discord.Color.green()
+                title=f"**{self.title}**",  # Bold the title
+                description=f"{self.description}\n\n" + '\n'.join(f"React with {emoji} for {role.mention} role" for emoji, role in pairs.items()),
+                color=discord.Color.green()  # Custom color for the embed
             )
+            embed.set_footer(text="Choose your role by reacting!", icon_url="https://cdn-icons-png.flaticon.com/512/5151/5151146.png")
 
             await interaction.response.send_message("Generating..", ephemeral=True)
 
             # Send the embed and store the message to access it later
             embedded_msg = await interaction.channel.send(embed=embed)                   
-            for emoji in pairs.keys(): # Add reactions to the embed
+            for emoji in pairs.keys():  # Add reactions to the embed
                 await embedded_msg.add_reaction(emoji)
 
+          
             await interaction.delete_original_response()
-            view.stop()
+            await self.header_interaction.delete_original_response()
+
+            view.stop()  # Stop the view to prevent further interactions
 
             # Store the message ID and the pairs for later role assignment
             interaction.client.reaction_role_message_id = embedded_msg.id
@@ -73,7 +82,7 @@ class ReactionRoleModal(discord.ui.Modal, title="Create Reaction Roles"):
         finish_button.callback = finish_button_callback
 
         await interaction.response.send_message(
-            "Please input the emoji and role in the format: `@role emoji` (one pair per message). Example:\n@Member 😀\nClick 'Finish' when done.",
+            "Please input the role and emoji in the format: `@role emoji` (one pair per message). Example:\n@Member 😀\nClick 'Finish' when done.",
             view=view,
             ephemeral=True
         )
@@ -129,8 +138,9 @@ class ReactionRoleModal(discord.ui.Modal, title="Create Reaction Roles"):
                         else:
                             if not stop_collecting:
                                 pairs[emoji] = role
-                                await interaction.followup.send(f"Added: {role_mention} with {emoji}", ephemeral=True)
                                 await user_input.delete()
+                                await interaction.followup.send(f"Added: {role_mention} with {emoji}", ephemeral=True, )
+                                
                             
                     else:
                         await user_input.delete()
