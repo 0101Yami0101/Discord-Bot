@@ -7,6 +7,7 @@ from special.chat import *
 from special.translate import *
 from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
 
+
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True 
@@ -19,7 +20,6 @@ commands = [
     translate,
     start_translate,
     start_chat_bot,
-    modinit.moderation,
     create_polls.poll,
     tickets.create_ticket_channel,
     embeds.create_embed,
@@ -33,13 +33,15 @@ for command in commands:
 app_commands= [
     system.info,
     system.avatar,
+    modinit.mod_command,
     reminder.set_reminder,
-    reaction_roles.reaction
+    reaction_roles.reaction,
+
+
 
 ]
 
 async def register_app_commands():  
-
     for command in app_commands:   
         bot.tree.add_command(command)
        
@@ -47,9 +49,6 @@ async def register_app_commands():
 
 
 # Wrappers
-async def profanity_wrapper(message):
-    await profanity_check.profanity_checker(message)
-
 async def on_message_wrapper(message):
     await on_message_translate(message, bot)
 
@@ -72,7 +71,6 @@ async def onAttachmentUploadWrapper(message):
     await embeds.on_attachment_upload_message(message= message)
 
 # Add handlers to events
-bot.add_listener(profanity_wrapper, 'on_message')
 bot.add_listener(chatbot_wrapper, 'on_message')
 bot.add_listener(on_message_wrapper, 'on_message')
 bot.add_listener(welcomeWrapper, 'on_member_join')
@@ -89,6 +87,7 @@ async def on_ready():
     await register_app_commands()
     #Load Cogs
     await bot.load_extension("basics.reaction_roles")
+    await bot.load_extension("Moderation.profanity_check")
 
 
 
