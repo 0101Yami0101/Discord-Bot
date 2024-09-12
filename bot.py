@@ -2,7 +2,7 @@ import os
 import discord
 from discord.interactions import Interaction
 from discord.ext import commands
-from Moderation import modinit, profanity_check 
+from Moderation import auto_mod_init, profanity_check 
 from special.chat import *
 from special.translate import *
 from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
@@ -33,7 +33,7 @@ for command in commands:
 app_commands= [
     system.info,
     system.avatar,
-    modinit.mod_command,
+    auto_mod_init.mod_command,
     reminder.set_reminder,
     reaction_roles.reaction,
 
@@ -88,6 +88,7 @@ async def on_ready():
     #Load Cogs
     await bot.load_extension("basics.reaction_roles")
     await bot.load_extension("Moderation.profanity_check")
+    await bot.load_extension("Moderation.spam_detect")
 
 
 

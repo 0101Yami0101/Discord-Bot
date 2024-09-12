@@ -1,7 +1,7 @@
 from better_profanity import profanity
 import discord
 from discord.ext import commands
-from Moderation import modinit
+from Moderation import auto_mod_init
 
 
 class ProfanityCog(commands.Cog):
@@ -10,7 +10,7 @@ class ProfanityCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if "profanity" in modinit.moderationSession:
+        if "profanity" in auto_mod_init.moderationSession:
 
             if profanity.contains_profanity(message.content):
                 await message.delete()
@@ -21,6 +21,6 @@ class ProfanityCog(commands.Cog):
                 )
                 await message.channel.send(embed=embed)
 
-# This function will add the Cog to the bot
+#add Cog to the bot
 async def setup(bot):
     await bot.add_cog(ProfanityCog(bot))
