@@ -36,9 +36,6 @@ app_commands= [
     auto_mod_init.mod_command,
     reminder.set_reminder,
     reaction_roles.reaction,
-
-
-
 ]
 
 async def register_app_commands():  
@@ -89,6 +86,7 @@ async def on_ready():
     await bot.load_extension("basics.reaction_roles")
     await bot.load_extension("Moderation.profanity_check")
     await bot.load_extension("Moderation.spam_detect")
+    await bot.load_extension("Moderation.caps_lock")
 
 
 

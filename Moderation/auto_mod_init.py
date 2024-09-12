@@ -7,7 +7,8 @@ class ModerationOptions(discord.ui.Select):
     def __init__(self, default_values=None, main_interaction: discord.Interaction = None):
         options = [
             discord.SelectOption(label="Profanity Filter", value="profanity", default="profanity" in default_values),
-            discord.SelectOption(label="Spam Filter", value="spam", default="spam" in default_values)
+            discord.SelectOption(label="Spam Filter", value="spam", default="spam" in default_values),
+            discord.SelectOption(label="Capslock Filter", value="capslock", default="capslock" in default_values)
         ]
         super().__init__(placeholder="Select moderation features...", options=options, min_values=0, max_values=len(options))
         self.main_interaction = main_interaction
@@ -17,7 +18,7 @@ class ModerationOptions(discord.ui.Select):
         selected_values = self.values
         moderationSession = selected_values
 
-        all_features = ["profanity", "spam"]
+        all_features = ["profanity", "spam", "capslock"]
         active_features = [feature for feature in all_features if feature in moderationSession]
         inactive_features = [feature for feature in all_features if feature not in moderationSession]
 
