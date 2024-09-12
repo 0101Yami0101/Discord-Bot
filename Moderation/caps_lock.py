@@ -10,9 +10,9 @@ class CapsLockDetectCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        if "capslock" not in auto_mod_init.moderationSession:  # Ensure the caps lock filter is enabled
+        if "capslock" not in auto_mod_init.moderationSession:
             return
-        if message.author.bot:  # Ignore messages from bots
+        if message.author.bot: 
             return
         
         if self.is_excessive_caps(message.content):
@@ -29,7 +29,6 @@ class CapsLockDetectCog(commands.Cog):
         caps_count = sum(1 for char in message_content if char.isupper())
         caps_ratio = caps_count / len(message_content)
 
-        # Consider a message excessive if more than 70% of it is in caps
         return caps_ratio > 0.7
 
 # Add Cog to the bot
