@@ -52,3 +52,5 @@ async def mod_command(interaction: discord.Interaction):
         content="Select the moderation features you want to enable:",
         view=view
     )
+
+

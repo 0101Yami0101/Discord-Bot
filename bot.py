@@ -1,8 +1,8 @@
 import os
 import discord
-from discord.interactions import Interaction
 from discord.ext import commands
-from Moderation import auto_mod_init, profanity_check 
+from Moderation import auto_mod_init
+from Moderation.manual import whitelist_links
 from special.chat import *
 from special.translate import *
 from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
@@ -36,6 +36,7 @@ app_commands= [
     auto_mod_init.mod_command,
     reminder.set_reminder,
     reaction_roles.reaction,
+    whitelist_links.whitelist_url
 ]
 
 async def register_app_commands():  
