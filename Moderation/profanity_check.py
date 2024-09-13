@@ -2,25 +2,33 @@ from better_profanity import profanity
 import discord
 from discord.ext import commands
 from Moderation import auto_mod_init
-
+from Moderation.auto_mod_init import userViolationCount  # Import the userViolationCount dict
 
 class ProfanityCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
+        
+        if message.author.bot:
+            return
+
         if "profanity" in auto_mod_init.moderationSession:
 
             if profanity.contains_profanity(message.content):
                 await message.delete()
-                embed = discord.Embed(
-                    title="Warning!! ",
-                    description=f"Profanity Detected in a message sent by @{message.author.name}",
-                    color=discord.Color.red()
-                )
-                await message.channel.send(embed=embed)
+                
+                #Increment violation count
+                user_id = message.author.id
+                if user_id in userViolationCount:
+                    userViolationCount[user_id] += 1
+                else:
+                    userViolationCount[user_id] = 1
+                    
+                warning_message = f"⚠️ {message.author.mention}, your message contains inappropriate language. Please refrain from using profanity. This is a warning, further violations may result in action."
+                await message.channel.send(warning_message, delete_after=6)
 
-#add Cog to the bot
+# Add the Cog to the bot
 async def setup(bot):
     await bot.add_cog(ProfanityCog(bot))

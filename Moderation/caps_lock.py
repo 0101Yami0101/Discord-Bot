@@ -3,6 +3,7 @@ import time
 from collections import defaultdict
 from discord.ext import commands
 from Moderation import auto_mod_init
+from Moderation.auto_mod_init import userViolationCount
 
 class CapsLockDetectCog(commands.Cog):
     def __init__(self, bot):
@@ -18,6 +19,12 @@ class CapsLockDetectCog(commands.Cog):
         if self.is_excessive_caps(message.content):
             await message.channel.send(f"⚠️ {message.author.mention}, please avoid using excessive caps lock.", delete_after=6)
             await message.delete()
+            user_id = message.author.id
+            #Increment violation count
+            if user_id in userViolationCount:
+                userViolationCount[user_id] += 1
+            else:
+                userViolationCount[user_id] = 1
 
         await self.bot.process_commands(message)
 

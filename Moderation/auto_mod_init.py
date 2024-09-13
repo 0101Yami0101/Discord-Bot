@@ -2,6 +2,7 @@ from discord import app_commands, ui
 import discord
 
 moderationSession = []
+userViolationCount= {}
 
 class ModerationOptions(discord.ui.Select):
     def __init__(self, default_values=None, main_interaction: discord.Interaction = None):
@@ -11,6 +12,7 @@ class ModerationOptions(discord.ui.Select):
             discord.SelectOption(label="Spam Filter", value="spam", default="spam" in default_values),
             discord.SelectOption(label="Capslock Filter", value="capslock", default="capslock" in default_values),
             discord.SelectOption(label="Links Filter", value="linkfilter", default="linkfilter" in default_values),
+            discord.SelectOption(label="Temporary Ban", value="tempban", default="tempban" in default_values),
         ]
         super().__init__(placeholder="Select moderation features...", options=options, min_values=0, max_values=len(options))
         self.main_interaction = main_interaction
@@ -20,7 +22,7 @@ class ModerationOptions(discord.ui.Select):
         selected_values = self.values
         moderationSession = selected_values
 
-        all_features = ["profanity", "spam", "capslock", "linkfilter"]
+        all_features = ["profanity", "spam", "capslock", "linkfilter", "tempban"]
         active_features = [feature for feature in all_features if feature in moderationSession]
         inactive_features = [feature for feature in all_features if feature not in moderationSession]
 

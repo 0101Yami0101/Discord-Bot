@@ -88,6 +88,7 @@ async def on_ready():
     await bot.load_extension("Moderation.spam_detect")
     await bot.load_extension("Moderation.caps_lock")
     await bot.load_extension("Moderation.links_and_invites")
+    await bot.load_extension("Moderation.temp_ban")
 
 
 

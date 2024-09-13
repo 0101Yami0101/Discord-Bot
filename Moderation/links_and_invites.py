@@ -2,6 +2,7 @@ import discord
 import re
 from discord.ext import commands
 from Moderation import auto_mod_init
+from Moderation.auto_mod_init import userViolationCount
 
 # Regex patterns for detecting URLs and Discord invite links
 URL_REGEX = r'(https?://[^\s]+)'
@@ -19,8 +20,16 @@ class LinkAndInviteFilterCog(commands.Cog):
             return
 
         if self.contains_link_or_invite(message.content):
+            # Send a warning message and delete the offending message
             await message.channel.send(f"🚫 {message.author.mention}, sharing links or invites is not allowed.", delete_after=6)
             await message.delete()
+
+            # Increment user violation count
+            user_id = message.author.id
+            if user_id in userViolationCount:
+                userViolationCount[user_id] += 1
+            else:
+                userViolationCount[user_id] = 1
 
         await self.bot.process_commands(message)
 
