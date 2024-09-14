@@ -1,11 +1,10 @@
 import os
 import discord
 from discord.ext import commands
-from Moderation import auto_mod_init
 from Moderation.manual import whitelist_links
 from special.chat import *
 from special.translate import *
-from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles, levelling_system
+from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
 
 
 intents = discord.Intents.default()
@@ -33,19 +32,23 @@ for command in commands:
 app_commands= [
     system.info,
     system.avatar,
-    auto_mod_init.mod_command,
     reminder.set_reminder,
     reaction_roles.reaction,
     whitelist_links.whitelist_url,
     # levelling_system.toggle_leveling
 ]
 
-async def register_app_commands():  
+async def register_app_commands():
+    # Register commands from the app_commands list
     for command in app_commands:   
         bot.tree.add_command(command)
-       
+    
+    # # Register commands from loaded cogs
+    # for cog in bot.cogs.values():
+    #     for command in cog.tree_commands:
+    #         bot.tree.add_command(command)
+    
     await bot.tree.sync()
-
 
 # Wrappers
 async def on_message_wrapper(message):
@@ -78,6 +81,19 @@ bot.add_listener(ticketOpenWrapper, 'on_interaction')
 bot.add_listener(createEmbedWrapper, 'on_interaction')
 bot.add_listener(onAttachmentUploadWrapper, 'on_message')
 
+
+async def load_all_cogs():
+    # Load all necessary cogs here
+    await bot.load_extension("basics.reaction_roles")
+    await bot.load_extension("basics.levelling_system")
+    await bot.load_extension("Moderation.auto_mod_init")
+    await bot.load_extension("Moderation.profanity_check")
+    await bot.load_extension("Moderation.spam_detect")
+    await bot.load_extension("Moderation.caps_lock")
+    await bot.load_extension("Moderation.links_and_invites")
+
+
+
 # System commands
 @bot.event
 async def on_ready():
@@ -85,13 +101,7 @@ async def on_ready():
     #Register app commands
     await register_app_commands()
     #Load Cogs
-    await bot.load_extension("basics.reaction_roles")
-    await bot.load_extension("basics.levelling_system")
-    await bot.load_extension("Moderation.profanity_check")
-    await bot.load_extension("Moderation.spam_detect")
-    await bot.load_extension("Moderation.caps_lock")
-    await bot.load_extension("Moderation.links_and_invites")
-    await bot.load_extension("Moderation.temp_ban")
+    await load_all_cogs()
 
 
 
