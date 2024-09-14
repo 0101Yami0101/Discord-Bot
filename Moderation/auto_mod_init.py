@@ -2,13 +2,17 @@ from discord import app_commands, ui
 import discord
 
 moderationSession = []
+userViolationCount= {}
 
 class ModerationOptions(discord.ui.Select):
     def __init__(self, default_values=None, main_interaction: discord.Interaction = None):
+        # TO-DO ADD DESCRIPTIONS FOR THE OPTIONS
         options = [
-            discord.SelectOption(label="Profanity Filter", value="profanity", default="profanity" in default_values),
-            discord.SelectOption(label="Spam Filter", value="spam", default="spam" in default_values),
-            discord.SelectOption(label="Capslock Filter", value="capslock", default="capslock" in default_values)
+            discord.SelectOption(label="Profanity Filter", value="profanity", default="profanity" in default_values, description="Automatically detect and filter out profane language."),
+            discord.SelectOption(label="Spam Filter", value="spam", default="spam" in default_values, description="Identify and mitigate spam messages."),
+            discord.SelectOption(label="Capslock Filter", value="capslock", default="capslock" in default_values, description="Monitor and control excessive use of caps-lock in messages."),
+            discord.SelectOption(label="Links Filter", value="linkfilter", default="linkfilter" in default_values, description="Control links/invites sharing. (Ignores whitelisted)"),
+            discord.SelectOption(label="Temporary Ban", value="tempban", default="tempban" in default_values, description="Ban users who repeatedly violate server rules for 24 hours."),
         ]
         super().__init__(placeholder="Select moderation features...", options=options, min_values=0, max_values=len(options))
         self.main_interaction = main_interaction
@@ -18,7 +22,7 @@ class ModerationOptions(discord.ui.Select):
         selected_values = self.values
         moderationSession = selected_values
 
-        all_features = ["profanity", "spam", "capslock"]
+        all_features = ["profanity", "spam", "capslock", "linkfilter", "tempban"]
         active_features = [feature for feature in all_features if feature in moderationSession]
         inactive_features = [feature for feature in all_features if feature not in moderationSession]
 
@@ -48,3 +52,5 @@ async def mod_command(interaction: discord.Interaction):
         content="Select the moderation features you want to enable:",
         view=view
     )
+
+

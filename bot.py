@@ -1,11 +1,11 @@
 import os
 import discord
-from discord.interactions import Interaction
 from discord.ext import commands
-from Moderation import auto_mod_init, profanity_check 
+from Moderation import auto_mod_init
+from Moderation.manual import whitelist_links
 from special.chat import *
 from special.translate import *
-from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
+from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles, levelling_system
 
 
 intents = discord.Intents.default()
@@ -36,6 +36,8 @@ app_commands= [
     auto_mod_init.mod_command,
     reminder.set_reminder,
     reaction_roles.reaction,
+    whitelist_links.whitelist_url,
+    # levelling_system.toggle_leveling
 ]
 
 async def register_app_commands():  
@@ -84,9 +86,12 @@ async def on_ready():
     await register_app_commands()
     #Load Cogs
     await bot.load_extension("basics.reaction_roles")
+    await bot.load_extension("basics.levelling_system")
     await bot.load_extension("Moderation.profanity_check")
     await bot.load_extension("Moderation.spam_detect")
     await bot.load_extension("Moderation.caps_lock")
+    await bot.load_extension("Moderation.links_and_invites")
+    await bot.load_extension("Moderation.temp_ban")
 
 
 
