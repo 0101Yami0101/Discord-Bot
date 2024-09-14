@@ -15,20 +15,20 @@ class LinkAndInviteFilterCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        if "linkfilter" not in auto_mod_init.moderationSession:  # Ensure the link filter is enabled
+        if "linkfilter" not in auto_mod_init.moderationSession:
             return
-        if message.author.bot:  # Ignore messages from bots
+        if message.author.bot: 
+            return
+
+        if self.is_author_admin_or_higher(message):
             return
 
         if self.contains_link_or_invite(message.content):
-            # Extract URLs from the message content
+    
             urls = re.findall(URL_REGEX, message.content)
             
-            # Check if any URL is in the whitelist or matches a whitelisted URL
             if any(self.is_whitelisted(url) for url in urls):
-                return  # Do nothing if the URL is whitelisted
-
-            # Send a warning message and delete the offending message
+                return  
             await message.channel.send(f"🚫 {message.author.mention}, sharing links or invites is not allowed.", delete_after=6)
             await message.delete()
 
@@ -48,15 +48,25 @@ class LinkAndInviteFilterCog(commands.Cog):
     def is_whitelisted(self, url: str):
         """Check if the URL is in the whitelist or matches a whitelisted URL."""
         for whitelisted in white_listed_urls:
-            # Check if the URL is exactly the same as a whitelisted URL
+
             if url == whitelisted:
                 return True
-            # Check if the URL is a substring of a whitelisted URL
             elif whitelisted in url:
                 return True
-            # Check if a whitelisted URL is a substring of the URL
             elif url in whitelisted:
                 return True
+        return False
+
+    def is_author_admin_or_higher(self, message: discord.Message):
+        """Check if the message author is an admin or has a higher role than the bot."""
+     
+        if message.author.guild_permissions.administrator:
+            return True
+
+        bot_member = message.guild.me  
+        if message.author.top_role > bot_member.top_role:
+            return True
+
         return False
 
 # Add Cog to the bot
