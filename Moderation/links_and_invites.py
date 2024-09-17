@@ -29,8 +29,8 @@ class LinkAndInviteFilterCog(commands.Cog):
             
             if any(self.is_whitelisted(url) for url in urls):
                 return  
-            await message.channel.send(f"🚫 {message.author.mention}, sharing links or invites is not allowed.", delete_after=6)
             await message.delete()
+            await message.channel.send(f"🚫 {message.author.mention}, sharing links or invites is not allowed.", delete_after=6)
 
             # Increment user violation count
             user_id = message.author.id

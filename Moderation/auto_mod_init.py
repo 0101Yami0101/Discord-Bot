@@ -50,7 +50,23 @@ class ModerationCog(commands.Cog):
 
     moderation_group = app_commands.Group(name="moderation", description="Moderate community using moderation functions")
 
-    @moderation_group.command(name='set', description="Set auto moderation functions")
+    @moderation_group.command(name='start', description="Start all auto-moderation functions")
+    @app_commands.checks.has_permissions(administrator=True)  # Restrict to admin users
+    async def start_all_command(self, interaction: discord.Interaction):
+        global moderationSession
+        moderationSession = ["profanity", "spam", "capslock", "linkfilter", "tempban", "imagefilter"]
+
+        embed = discord.Embed(
+            title="Moderation Settings Updated",
+            color=discord.Color.dark_orange()
+        )
+        embed.add_field(name="Active Features", value=", ".join(moderationSession), inline=False)
+        embed.add_field(name="Inactive Features", value="None", inline=False)
+
+        await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=20)
+
+
+    @moderation_group.command(name='set', description="Start/Stop auto-moderation functions")
     @app_commands.checks.has_permissions(administrator=True)  # Restrict to admin users
     async def start_command(self, interaction: discord.Interaction):
         view = ModerationView(original_interaction=interaction)
@@ -59,7 +75,8 @@ class ModerationCog(commands.Cog):
             view=view
         )
 
-    @moderation_group.command(name='stop', description="Disable all moderation functions")
+
+    @moderation_group.command(name='stop', description="Disable all auto-moderation functions")
     @app_commands.checks.has_permissions(administrator=True)  # Restrict to admin users
     async def stop_command(self, interaction: discord.Interaction):
         global moderationSession

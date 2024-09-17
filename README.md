@@ -18,6 +18,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Spam Detection**: Identify and mitigate spam messages to prevent server disruption.
   - **Caps-lock Detection**: Monitor and control excessive use of caps-lock in messages.
   - **Links and Invites Detection**: Detect and manage the sharing of external links and Discord invites, with a whitelist feature for approved URLs.
+  - **Image Filter**: Automatically detect and filter NSFW (Not Safe For Work) images to maintain a safe server environment.
   - **Temporary Ban on Violations**: Temporarily ban users who repeatedly violate server rules.
 - **Moderation Manual**:
   - **Whitelist Links**: Manually whitelist specific domains or URLs to allow sharing within the server.

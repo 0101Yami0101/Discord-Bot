@@ -43,8 +43,8 @@ class SpamDetectCog(commands.Cog):
 
         if is_spam(user_id):
             # Warn 
-            await message.channel.send(f"⚠️ {message.author.mention}, you're sending messages too fast! Please slow down.", delete_after=6)
             await message.delete()
+            await message.channel.send(f"⚠️ {message.author.mention}, you're sending messages too fast! Please slow down.", delete_after=6)
 
             user_spam_warnings[user_id] += 1
 

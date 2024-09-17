@@ -17,8 +17,8 @@ class CapsLockDetectCog(commands.Cog):
             return
         
         if self.is_excessive_caps(message.content):
-            await message.channel.send(f"⚠️ {message.author.mention}, please avoid using excessive caps lock.", delete_after=6)
             await message.delete()
+            await message.channel.send(f"⚠️ {message.author.mention}, please avoid using excessive caps lock.", delete_after=6)
             user_id = message.author.id
             #Increment violation count
             if user_id in userViolationCount:

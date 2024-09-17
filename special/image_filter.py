@@ -37,7 +37,6 @@ class ImageFilterCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         
-        print("ingfil ",auto_mod_init.moderationSession, userViolationCount)
         if "imagefilter" not in auto_mod_init.moderationSession:
             return
 

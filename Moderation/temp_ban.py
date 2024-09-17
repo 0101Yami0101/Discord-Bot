@@ -10,7 +10,7 @@ class TempBanCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        print("tempban ", auto_mod_init.moderationSession, userViolationCount)
+ 
         if "tempban" not in auto_mod_init.moderationSession:
             return
         
