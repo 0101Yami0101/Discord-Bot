@@ -14,6 +14,7 @@ class ModerationOptions(discord.ui.Select):
             discord.SelectOption(label="Capslock Filter", value="capslock", default="capslock" in default_values, description="Monitor and control excessive use of caps-lock in messages."),
             discord.SelectOption(label="Links Filter", value="linkfilter", default="linkfilter" in default_values, description="Control links/invites sharing. (Ignores whitelisted)"),
             discord.SelectOption(label="Temporary Ban", value="tempban", default="tempban" in default_values, description="Ban users who repeatedly violate server rules for 24 hours."),
+            discord.SelectOption(label="Image Filter", value="imagefilter", default="imagefilter" in default_values, description="Filter images that contains NSFW content"),
         ]
         super().__init__(placeholder="Select moderation features...", options=options, min_values=0, max_values=len(options))
         self.main_interaction = main_interaction
@@ -23,7 +24,7 @@ class ModerationOptions(discord.ui.Select):
         selected_values = self.values
         moderationSession = selected_values
 
-        all_features = ["profanity", "spam", "capslock", "linkfilter", "tempban"]
+        all_features = ["profanity", "spam", "capslock", "linkfilter", "tempban", "imagefilter"]
         active_features = [feature for feature in all_features if feature in moderationSession]
         inactive_features = [feature for feature in all_features if feature not in moderationSession]
 
@@ -69,7 +70,7 @@ class ModerationCog(commands.Cog):
             color=discord.Color.brand_red()
         )
         embed.add_field(name="Active Features", value="None", inline=False)
-        embed.add_field(name="Inactive Features", value="Profanity Filter, Spam Filter, Capslock Filter, Links Filter, Temporary Ban", inline=False)
+        embed.add_field(name="Inactive Features", value="Profanity Filter, Spam Filter, Capslock Filter, Links Filter, Temporary Ban, Image Filter", inline=False)
 
         await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=20)
         

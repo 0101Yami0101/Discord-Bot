@@ -10,6 +10,7 @@ class TempBanCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
+        print("tempban ", auto_mod_init.moderationSession, userViolationCount)
         if "tempban" not in auto_mod_init.moderationSession:
             return
         
@@ -18,7 +19,6 @@ class TempBanCog(commands.Cog):
 
         user_id = message.author.id
   
-
         # Check if the user has hit the violation threshold
         if userViolationCount.get(user_id, 0) >= 4:
             
@@ -28,8 +28,8 @@ class TempBanCog(commands.Cog):
     async def temp_ban_user(self, guild: discord.Guild, user: discord.Member):
         """Ban the user temporarily for 1 day (24 hours)."""
         try:
-            await guild.ban(user, reason="Exceeded violation count", delete_message_days=1)
             await user.send(f"You have been banned from {guild.name} for 24 hours due to repeated violations.")
+            await guild.ban(user, reason="Exceeded violation count", delete_message_days=1)
 
             # Schedule unban after 24 hours
             await discord.utils.sleep_until(discord.utils.utcnow() + timedelta(days=1))

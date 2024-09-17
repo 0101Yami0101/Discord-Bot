@@ -91,17 +91,19 @@ async def load_all_cogs():
     await bot.load_extension("Moderation.spam_detect")
     await bot.load_extension("Moderation.caps_lock")
     await bot.load_extension("Moderation.links_and_invites")
+    await bot.load_extension("Moderation.temp_ban")
+    await bot.load_extension("special.image_filter")
 
 
 
 # System commands
 @bot.event
 async def on_ready():
+    await load_all_cogs()
     print(f'Logged in as {bot.user}')
     #Register app commands
     await register_app_commands()
     #Load Cogs
-    await load_all_cogs()
 
 
 
