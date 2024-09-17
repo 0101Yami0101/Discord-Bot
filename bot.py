@@ -92,6 +92,7 @@ async def load_all_cogs():
     await bot.load_extension("Moderation.caps_lock")
     await bot.load_extension("Moderation.links_and_invites")
     await bot.load_extension("Moderation.temp_ban")
+    await bot.load_extension("Moderation.manual.blacklist")
     await bot.load_extension("special.image_filter")
 
 

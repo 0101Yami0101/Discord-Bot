@@ -22,6 +22,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Temporary Ban on Violations**: Temporarily ban users who repeatedly violate server rules.
 - **Moderation Manual**:
   - **Whitelist Links**: Manually whitelist specific domains or URLs to allow sharing within the server.
+  - **Blacklist Words and Phrases**: Manually blacklist specific words or phrases.
 
 ## Setup Instructions
 
