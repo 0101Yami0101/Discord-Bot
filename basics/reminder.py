@@ -186,3 +186,8 @@ async def set_reminder(interaction: discord.Interaction):
 
     reminder_model= ReminderModel() #Startup modal with empty fields
     await interaction.response.send_modal(reminder_model)
+
+
+
+
+#Set repeat reminder
