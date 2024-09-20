@@ -6,6 +6,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
 
 - **AI ChatBot**: Engage in conversations with an AI-powered chatbot for fun or assistance.
 - **Translation**: Translate messages to various languages within the server to facilitate communication among members.
+- **Verification System**: Verify legitimate users through a CAPTCHA-based verification system.
 - **Welcome/Goodbye Messages**: Automatically send personalized welcome messages to new members and farewell messages when members leave.
 - **Polls**: Easily create polls to gather opinions from server members, with various customization options.
 - **Tickets**: A ticketing system for handling user queries and issues efficiently, streamlining server support.
