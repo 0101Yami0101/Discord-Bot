@@ -6,10 +6,10 @@ import asyncio
 class MuteCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.muted_members = set()  # muted members
+        self.muted_members = set()  
 
     async def cog_load(self):
-        # Scan for muted members when cog loaded
+        # Scan for muted members 
         for guild in self.bot.guilds:
             mute_role = discord.utils.get(guild.roles, name="Muted")
             if mute_role:
@@ -49,7 +49,7 @@ class MuteCog(commands.Cog):
 
             self.muted_members.add(user.id)  # Track muted member
 
-            # Convert the duration
+
             seconds = self.parse_duration(duration)
             if seconds:
                 await asyncio.sleep(seconds)
@@ -73,7 +73,7 @@ class MuteCog(commands.Cog):
 
         if mute_role and mute_role in member.roles:
             await member.remove_roles(mute_role)
-            self.muted_members.discard(user.id)  # Remove from muted list
+            self.muted_members.discard(user.id)  
             await interaction.response.send_message(f'{user.mention} has been unmuted', ephemeral=True)
         else:
             await interaction.response.send_message(f'{user.mention} is not muted!', ephemeral=True)
