@@ -95,6 +95,7 @@ async def load_all_cogs():
     await bot.load_extension("Moderation.manual.blacklist")
     await bot.load_extension("Moderation.manual.mute")
     await bot.load_extension("Moderation.manual.kick")
+    await bot.load_extension("Moderation.manual.custom_ban")
     await bot.load_extension("special.image_filter")
     await bot.load_extension("special.verification")
 
