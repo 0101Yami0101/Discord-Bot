@@ -27,6 +27,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Mute Members**: Mute members for a specified duration.
   - **Kick Members**: Kick members from the server.
   - **Ban Members**: Ban members from the server for a specified duration or permanently.
+  - **Slowmode**: Configure Slowmode settings with custom delay for channels.
 
 ## Setup Instructions
 
