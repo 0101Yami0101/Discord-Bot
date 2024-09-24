@@ -13,7 +13,7 @@ class ModerationOptions(discord.ui.Select):
             discord.SelectOption(label="Spam Filter", value="spam", default="spam" in default_values, description="Identify and mitigate spam messages."),
             discord.SelectOption(label="Capslock Filter", value="capslock", default="capslock" in default_values, description="Monitor and control excessive use of caps-lock in messages."),
             discord.SelectOption(label="Links Filter", value="linkfilter", default="linkfilter" in default_values, description="Control links/invites sharing. (Ignores whitelisted)"),
-            discord.SelectOption(label="Temporary Ban", value="tempban", default="tempban" in default_values, description="Ban users who repeatedly violate server rules for 24 hours."),
+            discord.SelectOption(label="Temporary Ban", value="tempban", default="tempban" in default_values, description="Temporarily ban users who repeatedly violate server rules for 24 hours."),
             discord.SelectOption(label="Image Filter", value="imagefilter", default="imagefilter" in default_values, description="Filter images that contains NSFW content"),
         ]
         super().__init__(placeholder="Select moderation features...", options=options, min_values=0, max_values=len(options))
