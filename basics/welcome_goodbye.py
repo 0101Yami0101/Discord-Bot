@@ -30,7 +30,7 @@ async def goodbye_on_remove(member, bot):
         channel = bot.get_channel(1111744485714579476)  
 
         embed = discord.Embed(
-            title="f{member.name} has left the server!👋",
+            title=f"{member.name} has left the server!👋",
             color=discord.Color.red()
         )
 

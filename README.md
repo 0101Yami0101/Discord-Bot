@@ -25,6 +25,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Whitelist Links**: Manually whitelist specific domains or URLs to allow sharing within the server.
   - **Blacklist Words and Phrases**: Manually blacklist specific words or phrases.
   - **Mute Members**: Mute members for a specified duration.
+  - **Kick Members**: Kick members from the server.
 
 ## Setup Instructions
 
