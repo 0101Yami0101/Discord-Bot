@@ -17,7 +17,11 @@ class ProfanityCog(commands.Cog):
         if "profanity" in auto_mod_init.moderationSession:
 
             if profanity.contains_profanity(message.content):
-                await message.delete()
+                try:
+
+                    await message.delete()
+                except:
+                    print("Unable to delete message")
                 
                 #Increment violation count
                 user_id = message.author.id

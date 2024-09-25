@@ -21,6 +21,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Links and Invites Detection**: Detect and manage the sharing of external links and Discord invites, with a whitelist feature for approved URLs.
   - **Image Filter**: Automatically detect and filter NSFW (Not Safe For Work) images to maintain a safe server environment.
   - **Temporary Ban on Violations**: Temporarily ban users who repeatedly violate server rules.
+  - **Permanent Ban on Violations**: Automaticakky ban users permanently after repeated violations.
 - **Moderation Manual**:
   - **Whitelist Links**: Manually whitelist specific domains or URLs to allow sharing within the server.
   - **Blacklist Words and Phrases**: Manually blacklist specific words or phrases.

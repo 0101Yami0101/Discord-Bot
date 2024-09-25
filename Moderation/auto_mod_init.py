@@ -15,6 +15,7 @@ class ModerationOptions(discord.ui.Select):
             discord.SelectOption(label="Links Filter", value="linkfilter", default="linkfilter" in default_values, description="Control links/invites sharing. (Ignores whitelisted)"),
             discord.SelectOption(label="Temporary Ban", value="tempban", default="tempban" in default_values, description="Temporarily ban users who repeatedly violate server rules for 24 hours."),
             discord.SelectOption(label="Image Filter", value="imagefilter", default="imagefilter" in default_values, description="Filter images that contains NSFW content"),
+            discord.SelectOption(label="Permanent Ban", value="permban", default="permban" in default_values, description="Permanently ban users after repeated violations"),
         ]
         super().__init__(placeholder="Select moderation features...", options=options, min_values=0, max_values=len(options))
         self.main_interaction = main_interaction
@@ -24,7 +25,7 @@ class ModerationOptions(discord.ui.Select):
         selected_values = self.values
         moderationSession = selected_values
 
-        all_features = ["profanity", "spam", "capslock", "linkfilter", "tempban", "imagefilter"]
+        all_features = ["profanity", "spam", "capslock", "linkfilter", "tempban", "imagefilter", "permban"]
         active_features = [feature for feature in all_features if feature in moderationSession]
         inactive_features = [feature for feature in all_features if feature not in moderationSession]
 
@@ -54,7 +55,7 @@ class ModerationCog(commands.Cog):
     @app_commands.checks.has_permissions(administrator=True)  # Restrict to admin users
     async def start_all_command(self, interaction: discord.Interaction):
         global moderationSession
-        moderationSession = ["profanity", "spam", "capslock", "linkfilter", "tempban", "imagefilter"]
+        moderationSession = ["profanity", "spam", "capslock", "linkfilter", "tempban", "imagefilter", "permban"]
 
         embed = discord.Embed(
             title="Moderation Settings Updated",
@@ -87,7 +88,7 @@ class ModerationCog(commands.Cog):
             color=discord.Color.brand_red()
         )
         embed.add_field(name="Active Features", value="None", inline=False)
-        embed.add_field(name="Inactive Features", value="Profanity Filter, Spam Filter, Capslock Filter, Links Filter, Temporary Ban, Image Filter", inline=False)
+        embed.add_field(name="Inactive Features", value="Profanity Filter, Spam Filter, Capslock Filter, Links Filter, Temporary Ban, Image Filter, Permanent Ban", inline=False)
 
         await interaction.response.send_message(embed=embed, ephemeral=True, delete_after=20)
         
