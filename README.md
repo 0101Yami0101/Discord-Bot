@@ -24,6 +24,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Permanent Ban on Violations**: Automatically ban users permanently after repeated violations.
 - **Moderation Manual**:
   - **Whitelist Links**: Manually whitelist specific domains or URLs to allow sharing within the server.
+  - **Create Channels**: Create different types of channels available on Discord manually.
   - **Blacklist Words and Phrases**: Manually blacklist specific words or phrases.
   - **Mute Members**: Mute members for a specified duration.
   - **Kick Members**: Kick members from the server.
