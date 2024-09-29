@@ -42,12 +42,7 @@ async def register_app_commands():
     # Register commands from the app_commands list
     for command in app_commands:   
         bot.tree.add_command(command)
-    
-    # # Register commands from loaded cogs
-    # for cog in bot.cogs.values():
-    #     for command in cog.tree_commands:
-    #         bot.tree.add_command(command)
-    
+ 
     await bot.tree.sync()
 
 # Wrappers
@@ -94,6 +89,7 @@ async def load_all_cogs():
     await bot.load_extension("Moderation.temp_ban")
     await bot.load_extension("Moderation.permanent_ban")
     await bot.load_extension("Moderation.manual.blacklist")
+    await bot.load_extension("Moderation.manual.create_channels")
     await bot.load_extension("Moderation.manual.mute")
     await bot.load_extension("Moderation.manual.kick")
     await bot.load_extension("Moderation.manual.custom_ban")
