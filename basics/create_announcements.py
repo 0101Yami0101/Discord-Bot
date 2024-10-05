@@ -84,6 +84,6 @@ class CreateAnnouncementCog(commands.Cog):
             if 'image_response' in locals():
                 await image_response.delete(delay=1)
 
-# Setup the cog
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(CreateAnnouncementCog(bot))
