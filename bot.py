@@ -5,7 +5,7 @@ from Moderation.manual import whitelist_links
 from special.chat import *
 from special.translate import *
 from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
-
+from system.groups import create_group
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -28,8 +28,9 @@ for command in commands:
     bot.add_command(command)
 
 
+
 # App_commands (Slash commands)
-app_commands= [
+app_commands_list= [
     system.info,
     system.avatar,
     reminder.set_reminder,
@@ -39,10 +40,10 @@ app_commands= [
 ]
 
 async def register_app_commands():
-    # Register commands from the app_commands list
-    for command in app_commands:   
+    for command in app_commands_list:   
         bot.tree.add_command(command)
- 
+    
+    
     await bot.tree.sync()
 
 # Wrappers
@@ -79,6 +80,7 @@ bot.add_listener(onAttachmentUploadWrapper, 'on_message')
 
 async def load_all_cogs():
     # Load all necessary cogs here
+    await bot.load_extension("basics.create_announcements")
     await bot.load_extension("basics.reaction_roles")
     await bot.load_extension("basics.levelling_system")
     await bot.load_extension("Moderation.auto_mod_init")
@@ -102,11 +104,15 @@ async def load_all_cogs():
 # System commands
 @bot.event
 async def on_ready():
+    #Register groups
+    bot.tree.add_command(create_group) #CREATE CLASS FOR GROUPS
+
     await load_all_cogs()
     print(f'Logged in as {bot.user}')
-    #Register app commands
+   
     await register_app_commands()
-    #Load Cogs
+    await bot.tree.sync()
+
 
 
 
