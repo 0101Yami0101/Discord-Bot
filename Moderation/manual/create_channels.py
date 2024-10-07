@@ -6,38 +6,47 @@ class CreateChannelsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    create_group = app_commands.Group(name="create", description="Create anything (Channels, roles, announcements, embeds, reminders etc).")
-    create_channels_group = app_commands.Group(name="channel", description="Create channels (Text, Voice, Forum, Announcement, or Stage).", parent=create_group)
 
-    @create_channels_group.command(name="text", description="Create a text channel (private or public).")
-    @app_commands.checks.has_permissions(manage_channels=True)
-    @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
-    async def create_text_channel(self, interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
-        await self.create_channel(interaction, channel_name, discord.ChannelType.text, is_private, topic, category)
+        # Initialize the channels_group with 'create' as its parent
+        self.channels_group = app_commands.Group(
+            name="channel", 
+            description="Create channels (Text, Voice, Forum, Announcement, or Stage).",
+            parent=bot.tree.get_command('create')
+        )
+        
+        self.add_channel_commands()
 
-    @create_channels_group.command(name="voice", description="Create a voice channel (private or public).")
-    @app_commands.checks.has_permissions(manage_channels=True)
-    @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
-    async def create_voice_channel(self, interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
-        await self.create_channel(interaction, channel_name, discord.ChannelType.voice, is_private, topic, category)
+    def add_channel_commands(self):
+        # Define commands within the channels_group
+        @self.channels_group.command(name="text", description="Create a text channel (private or public).")
+        @app_commands.checks.has_permissions(manage_channels=True)
+        @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
+        async def create_text_channel(interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
+            await self.create_channel(interaction, channel_name, discord.ChannelType.text, is_private, topic, category)
 
-    @create_channels_group.command(name="forum", description="Create a forum channel (private or public).")
-    @app_commands.checks.has_permissions(manage_channels=True)
-    @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
-    async def create_forum_channel(self, interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
-        await self.create_channel(interaction, channel_name, discord.ChannelType.forum, is_private, topic, category)
+        @self.channels_group.command(name="voice", description="Create a voice channel (private or public).")
+        @app_commands.checks.has_permissions(manage_channels=True)
+        @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
+        async def create_voice_channel(interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
+            await self.create_channel(interaction, channel_name, discord.ChannelType.voice, is_private, topic, category)
 
-    @create_channels_group.command(name="announcement", description="Create an announcement channel (private or public).")
-    @app_commands.checks.has_permissions(manage_channels=True)
-    @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
-    async def create_announcement_channel(self, interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
-        await self.create_channel(interaction, channel_name, discord.ChannelType.news, is_private, topic, category)
+        @self.channels_group.command(name="forum", description="Create a forum channel (private or public).")
+        @app_commands.checks.has_permissions(manage_channels=True)
+        @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
+        async def create_forum_channel(interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
+            await self.create_channel(interaction, channel_name, discord.ChannelType.forum, is_private, topic, category)
 
-    @create_channels_group.command(name="stage", description="Create a stage channel (private or public).")
-    @app_commands.checks.has_permissions(manage_channels=True)
-    @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
-    async def create_stage_channel(self, interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
-        await self.create_channel(interaction, channel_name, discord.ChannelType.stage_voice, is_private, topic, category)
+        @self.channels_group.command(name="announcement", description="Create an announcement channel (private or public).")
+        @app_commands.checks.has_permissions(manage_channels=True)
+        @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
+        async def create_announcement_channel(interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
+            await self.create_channel(interaction, channel_name, discord.ChannelType.news, is_private, topic, category)
+
+        @self.channels_group.command(name="stage", description="Create a stage channel (private or public).")
+        @app_commands.checks.has_permissions(manage_channels=True)
+        @app_commands.describe(channel_name="Enter the channel name", is_private="Is the channel private?", category="Select the category to create the channel", topic="Optional: Enter the topic for the channel")
+        async def create_stage_channel(interaction: discord.Interaction, channel_name: str, is_private: bool, topic: str = None, category: discord.CategoryChannel = None):
+            await self.create_channel(interaction, channel_name, discord.ChannelType.stage_voice, is_private, topic, category)
 
     async def create_channel(self, interaction: discord.Interaction, channel_name: str, channel_type: discord.ChannelType, is_private: bool, topic: str, category: discord.CategoryChannel = None):
         guild = interaction.guild
@@ -79,7 +88,6 @@ class CreateChannelsCog(commands.Cog):
         else:
             await self.finalize_channel_creation(interaction, guild, channel_name, channel_type, is_private, topic, overwrites, category)
 
-    # Finalize Channel Creation
     async def finalize_channel_creation(self, interaction: discord.Interaction, guild: discord.Guild, channel_name: str, channel_type: discord.ChannelType, is_private: bool, topic: str, overwrites: dict, category: discord.CategoryChannel):
         await interaction.response.defer(ephemeral=True)
 
@@ -129,7 +137,6 @@ class CreateChannelsCog(commands.Cog):
 
         except Exception as e:
             await interaction.followup.send(f"Channel creation failed. {e}. Try again.")
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(CreateChannelsCog(bot))
