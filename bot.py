@@ -1,5 +1,6 @@
 import os
 import discord
+import asyncio
 from discord.ext import commands
 from Moderation.manual import whitelist_links
 from special.chat import *
@@ -79,25 +80,34 @@ bot.add_listener(onAttachmentUploadWrapper, 'on_message')
 
 
 async def load_all_cogs():
-    # Load all necessary cogs here
-    await bot.load_extension("basics.create_announcements")
-    await bot.load_extension("basics.reaction_roles")
-    await bot.load_extension("basics.levelling_system")
-    await bot.load_extension("Moderation.auto_mod_init")
-    await bot.load_extension("Moderation.profanity_check")
-    await bot.load_extension("Moderation.spam_detect")
-    await bot.load_extension("Moderation.caps_lock")
-    await bot.load_extension("Moderation.links_and_invites")
-    await bot.load_extension("Moderation.temp_ban")
-    await bot.load_extension("Moderation.permanent_ban")
-    await bot.load_extension("Moderation.manual.blacklist")
-    await bot.load_extension("Moderation.manual.create_channels")
-    await bot.load_extension("Moderation.manual.mute")
-    await bot.load_extension("Moderation.manual.kick")
-    await bot.load_extension("Moderation.manual.custom_ban")
-    await bot.load_extension("Moderation.manual.slowmode")
-    await bot.load_extension("special.image_filter")
-    await bot.load_extension("special.verification")
+    # List of all cogs to load
+    cogs = [
+        "basics.create_announcements",
+        "basics.create_posts",
+        "basics.reaction_roles",
+        "basics.levelling_system",
+        "Moderation.auto_mod_init",
+        "Moderation.profanity_check",
+        "Moderation.spam_detect",
+        "Moderation.caps_lock",
+        "Moderation.links_and_invites",
+        "Moderation.temp_ban",
+        "Moderation.permanent_ban",
+        "Moderation.manual.blacklist",
+        "Moderation.manual.create_channels",
+        "Moderation.manual.mute",
+        "Moderation.manual.kick",
+        "Moderation.manual.custom_ban",
+        "Moderation.manual.slowmode",
+        "special.image_filter",
+        "special.verification"
+    ]
+
+    # Create a list of tasks to load each cog
+    tasks = [bot.load_extension(cog) for cog in cogs]
+
+    # Run all tasks concurrently
+    await asyncio.gather(*tasks)
 
 
 

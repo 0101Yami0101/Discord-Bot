@@ -11,6 +11,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
 - **Polls**: Easily create polls to gather opinions from server members, with various customization options.
 - **Tickets**: A ticketing system for handling user queries and issues efficiently, streamlining server support.
 - **Announcements**:  Effortlessly create and broadcast announcements with customizable options.
+- **Forum Posts**: Create and manage discussion posts in dedicated forum channels.
 - **Embeds**: Send rich, visually appealing messages with embedded content to enhance announcements and other communications.
 - **Reminders**: Set reminders for tasks or events so you never miss important deadlines.
 - **Reaction Roles**: Assign roles to members through emoji reactions, making role management interactive and user-friendly.
