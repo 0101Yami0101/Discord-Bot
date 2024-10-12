@@ -82,25 +82,26 @@ bot.add_listener(onAttachmentUploadWrapper, 'on_message')
 async def load_all_cogs():
     # List of all cogs to load
     cogs = [
-        "basics.create_announcements",
-        "basics.create_posts",
-        "basics.reaction_roles",
-        "basics.levelling_system",
-        "Moderation.auto_mod_init",
-        "Moderation.profanity_check",
-        "Moderation.spam_detect",
-        "Moderation.caps_lock",
-        "Moderation.links_and_invites",
-        "Moderation.temp_ban",
-        "Moderation.permanent_ban",
-        "Moderation.manual.blacklist",
-        "Moderation.manual.create_channels",
-        "Moderation.manual.mute",
-        "Moderation.manual.kick",
-        "Moderation.manual.custom_ban",
-        "Moderation.manual.slowmode",
-        "special.image_filter",
-        "special.verification"
+        "basics.create_events",
+        # "basics.create_posts",
+        # "basics.create_announcements",
+        # "basics.reaction_roles",
+        # "basics.levelling_system",
+        # "Moderation.auto_mod_init",
+        # "Moderation.profanity_check",
+        # "Moderation.spam_detect",
+        # "Moderation.caps_lock",
+        # "Moderation.links_and_invites",
+        # "Moderation.temp_ban",
+        # "Moderation.permanent_ban",
+        # "Moderation.manual.blacklist",
+        # "Moderation.manual.create_channels",
+        # "Moderation.manual.mute",
+        # "Moderation.manual.kick",
+        # "Moderation.manual.custom_ban",
+        # "Moderation.manual.slowmode",
+        # "special.image_filter",
+        # "special.verification"
     ]
 
     # Create a list of tasks to load each cog
