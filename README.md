@@ -9,6 +9,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
 - **Verification System**: Verify legitimate users through a CAPTCHA-based verification system.
 - **Welcome/Goodbye Messages**: Automatically send personalized welcome messages to new members and farewell messages when members leave.
 - **Polls**: Easily create polls to gather opinions from server members, with various customization options.
+- **Roles**: Quickly create, assign/unassign, edit and customise roles on the server.
 - **Tickets**: A ticketing system for handling user queries and issues efficiently, streamlining server support.
 - **Announcements**:  Effortlessly create and broadcast announcements with customizable options.
 - **Create Events**: Schedule events within the server or in other external location.
