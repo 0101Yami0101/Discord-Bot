@@ -12,6 +12,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
 - **Roles**: Quickly create, assign/unassign, edit and customise roles on the server.
 - **Tickets**: A ticketing system for handling user queries and issues efficiently, streamlining server support.
 - **Announcements**:  Effortlessly create and broadcast announcements with customizable options.
+- **Channel Permissions**:  Edit channel specific permissions for particular roles instantly.
 - **Create Events**: Schedule events within the server or in other external location.
 - **Forum Posts**: Create and manage discussion posts in dedicated forum channels.
 - **Embeds**: Send rich, visually appealing messages with embedded content to enhance announcements and other communications.
