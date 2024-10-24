@@ -6,7 +6,7 @@ from Moderation.manual import whitelist_links
 from special.chat import *
 from special.translate import *
 from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
-from system.groups import create_group, role_group
+from system.groups import create_group, role_group, channel_group
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -82,10 +82,11 @@ bot.add_listener(onAttachmentUploadWrapper, 'on_message')
 async def load_all_cogs():
     # List of all cogs to load
     cogs = [
+        "basics.channel"
         # "basics.create_events",
         # "basics.create_posts",
         # "basics.create_announcements",
-        "basics.roles",
+        # "basics.roles",
         # "basics.reaction_roles",
         # "basics.levelling_system",
         # "Moderation.auto_mod_init",
@@ -119,6 +120,7 @@ async def on_ready():
     #Register groups
     bot.tree.add_command(create_group) #todo- CREATE CLASS FOR GROUPS
     bot.tree.add_command(role_group) #todo- CREATE CLASS FOR GROUPS
+    bot.tree.add_command(channel_group) #todo- CREATE CLASS FOR GROUPS
 
     await load_all_cogs()
     print(f'Logged in as {bot.user}')
