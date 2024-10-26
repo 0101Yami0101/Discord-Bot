@@ -6,7 +6,8 @@ from Moderation.manual import whitelist_links
 from special.chat import *
 from special.translate import *
 from basics import reminder, system, welcome_goodbye, create_polls, tickets, embeds, reaction_roles
-from system.groups import create_group, role_group, channel_group
+from system.groups import create_group, role_group, channel_group, raffle_group
+
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -43,6 +44,7 @@ app_commands_list= [
 async def register_app_commands():
     for command in app_commands_list:   
         bot.tree.add_command(command)
+        
     
     
     await bot.tree.sync()
@@ -82,7 +84,7 @@ bot.add_listener(onAttachmentUploadWrapper, 'on_message')
 async def load_all_cogs():
     # List of all cogs to load
     cogs = [
-        "basics.channel"
+        "basics.channel",
         # "basics.create_events",
         # "basics.create_posts",
         # "basics.create_announcements",
@@ -104,9 +106,9 @@ async def load_all_cogs():
         # "Moderation.manual.slowmode",
         # "special.image_filter",
         # "special.verification"
+        "games.raffle_quick"
     ]
 
-    # Create a list of tasks to load each cog
     tasks = [bot.load_extension(cog) for cog in cogs]
 
     # Run all tasks concurrently
@@ -118,9 +120,13 @@ async def load_all_cogs():
 @bot.event
 async def on_ready():
     #Register groups
+    
     bot.tree.add_command(create_group) #todo- CREATE CLASS FOR GROUPS
     bot.tree.add_command(role_group) #todo- CREATE CLASS FOR GROUPS
-    bot.tree.add_command(channel_group) #todo- CREATE CLASS FOR GROUPS
+    bot.tree.add_command(channel_group) #todo- CREATE CLASS FOR GROUP
+    bot.tree.add_command(raffle_group) #todo- CREATE CLASS FOR GROUP
+        
+   
 
     await load_all_cogs()
     print(f'Logged in as {bot.user}')
