@@ -9,8 +9,11 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
 - **Verification System**: Verify legitimate users through a CAPTCHA-based verification system.
 - **Welcome/Goodbye Messages**: Automatically send personalized welcome messages to new members and farewell messages when members leave.
 - **Polls**: Easily create polls to gather opinions from server members, with various customization options.
+- **Roles**: Quickly create, assign/unassign, edit and customise roles on the server.
 - **Tickets**: A ticketing system for handling user queries and issues efficiently, streamlining server support.
 - **Announcements**:  Effortlessly create and broadcast announcements with customizable options.
+- **Channel Permissions**:  Edit channel specific permissions for particular roles instantly.
+- **Create Events**: Schedule events within the server or in other external location.
 - **Forum Posts**: Create and manage discussion posts in dedicated forum channels.
 - **Embeds**: Send rich, visually appealing messages with embedded content to enhance announcements and other communications.
 - **Reminders**: Set reminders for tasks or events so you never miss important deadlines.
@@ -32,6 +35,8 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Kick Members**: Kick members from the server.
   - **Ban Members**: Ban members from the server for a specified duration or permanently.
   - **Slowmode**: Configure Slowmode settings with custom delay for channels.
+- **Games**:
+  - **Raffle Quick**: Quickly run a raffle on a list of members and select random winners.
 
 ## Setup Instructions
 
