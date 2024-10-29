@@ -106,7 +106,7 @@ async def load_all_cogs():
         # "Moderation.manual.slowmode",
         # "special.image_filter",
         # "special.verification"
-        "games.raffle_quick"
+        "games.raffle"
     ]
 
     tasks = [bot.load_extension(cog) for cog in cogs]
