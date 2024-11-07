@@ -38,7 +38,8 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
 - **Games**:
   - **Raffle Quick**: Quickly run a raffle on a list of members and select random winners.
   - **Raffle Embed**: Create a Reaction Embed raffle where user's can participate just by reacting.
-  - **Raffle FIght**: Create a raffle that selects WInner Dramatically.
+  - **Raffle Fight**: Create a raffle that selects Winner dramatically.
+  - **Quiz**: Create fun quizzes and enjoy with your community in an instant.
 
 ## Setup Instructions
 

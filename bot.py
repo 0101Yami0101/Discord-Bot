@@ -84,7 +84,7 @@ bot.add_listener(onAttachmentUploadWrapper, 'on_message')
 async def load_all_cogs():
     # List of all cogs to load
     cogs = [
-        "basics.channel",
+        # "basics.channel",
         # "basics.create_events",
         # "basics.create_posts",
         # "basics.create_announcements",
@@ -105,8 +105,9 @@ async def load_all_cogs():
         # "Moderation.manual.custom_ban",
         # "Moderation.manual.slowmode",
         # "special.image_filter",
-        # "special.verification"
-        "games.raffle"
+        # "special.verification",
+        # "games.raffle",
+        "games.quiz"
     ]
 
     tasks = [bot.load_extension(cog) for cog in cogs]
@@ -134,12 +135,5 @@ async def on_ready():
     await register_app_commands()
     await bot.tree.sync()
 
-
-
-
-
-
-
-
-# run bot
+ 
 bot.run(os.getenv('DISCORD_TOKEN'))
