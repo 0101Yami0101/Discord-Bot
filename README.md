@@ -40,6 +40,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Raffle Embed**: Create a Reaction Embed raffle where user's can participate just by reacting.
   - **Raffle Fight**: Create a raffle that selects Winner dramatically.
   - **Quiz**: Create fun quizzes and enjoy with your community in an instant.
+  - **Hangman**: Play Hangman with a unique twist with your community.
 
 ## Setup Instructions
 

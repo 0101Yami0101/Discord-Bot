@@ -107,7 +107,8 @@ async def load_all_cogs():
         # "special.image_filter",
         # "special.verification",
         # "games.raffle",
-        "games.quiz"
+        # "games.quiz"
+        "games.hangman"
     ]
 
     tasks = [bot.load_extension(cog) for cog in cogs]
