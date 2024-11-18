@@ -104,12 +104,13 @@ async def load_all_cogs():
         # "Moderation.manual.kick",
         # "Moderation.manual.custom_ban",
         # "Moderation.manual.slowmode",
+        "Moderation.manual.invites_tracker",
         # "special.image_filter",
         # "special.verification",
         # "games.raffle",
         # "games.quiz",
         # "games.hangman",
-        "games.tictactoe",
+        # "games.tictactoe",
     ]
 
     tasks = [bot.load_extension(cog) for cog in cogs]

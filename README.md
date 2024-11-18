@@ -35,6 +35,7 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Kick Members**: Kick members from the server.
   - **Ban Members**: Ban members from the server for a specified duration or permanently.
   - **Slowmode**: Configure Slowmode settings with custom delay for channels.
+  - **Invites Tracker**: Set up a leaderboard to track invites by your members.
 - **Games**:
   - **Raffle Quick**: Quickly run a raffle on a list of members and select random winners.
   - **Raffle Embed**: Create a Reaction Embed raffle where user's can participate just by reacting.

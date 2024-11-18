@@ -8,8 +8,8 @@ class InviteTracker(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.tracking = False
-        self.invite_data = defaultdict(int)  # Tracks invites {user_id: invite_count}
-        self.initial_invites = {}  # Stores the initial invite counts
+        self.invite_data = defaultdict(int)  # Tracks invites 
+        self.initial_invites = {}
 
     invite_commands_group = app_commands.Group(name="invites", description="Manage invite tracking.")
 
@@ -21,38 +21,46 @@ class InviteTracker(commands.Cog):
             return
 
         self.tracking = True
-        self.invite_data.clear()  # Reset the invite data
+        self.invite_data.clear() 
+        self.initial_invites.clear()
         await interaction.response.send_message("Invite tracking has started.", ephemeral=True)
 
         guild = interaction.guild
         invites = await guild.invites()
 
-        # Initialize invite counts
-        for invite in invites:
-            if invite.inviter:
-                self.initial_invites[invite.code] = invite.uses
+        self.initial_invites = {invite.code: invite.uses for invite in invites if invite.inviter}
+
+        # print("Tracking started. Initial invites:", self.initial_invites)
 
     @invite_commands_group.command(name="leaderboard", description="Show the current invite leaderboard.")
     async def show_leaderboard(self, interaction: discord.Interaction):
         if not self.tracking:
-            await interaction.response.send_message("Invite tracking is not active.", ephemeral=True)
+            await interaction.response.send_message("🚫 Invite tracking is not active.", ephemeral=True)
             return
 
         if not self.invite_data:
-            await interaction.response.send_message("No invites have been tracked yet!", ephemeral=True)
+            await interaction.response.send_message("📭 No invites have been tracked yet!", ephemeral=True)
             return
 
-        # Sort the leaderboard by invite count
+        # Sort
         sorted_leaderboard = sorted(self.invite_data.items(), key=lambda x: x[1], reverse=True)
         leaderboard_text = "\n".join(
-            [f"<@{user_id}>: {invites} invite(s)" for user_id, invites in sorted_leaderboard[:10]]
+            [
+                f"🥇 <@{user_id}>: {invites} invite(s)" if i == 0 else
+                f"🥈 <@{user_id}>: {invites} invite(s)" if i == 1 else
+                f"🥉 <@{user_id}>: {invites} invite(s)" if i == 2 else
+                f"⭐ <@{user_id}>: {invites} invite(s)"
+                for i, (user_id, invites) in enumerate(sorted_leaderboard[:10])
+            ]
         )
 
         embed = discord.Embed(
-            title="Invite Leaderboard",
+            title="🌟 Invite Leaderboard 🌟",
             description=leaderboard_text or "No invites to display.",
             color=discord.Color.blue(),
         )
+        embed.set_footer(text="Keep inviting friends to climb the leaderboard! 🚀")
+
         await interaction.response.send_message(embed=embed)
 
     @invite_commands_group.command(name="stop", description="Stop tracking invites.")
@@ -75,14 +83,23 @@ class InviteTracker(commands.Cog):
 
         guild = member.guild
         current_invites = await guild.invites()
+        matched = False
 
-        # Compare current invites with the initial counts
         for invite in current_invites:
             if invite.code in self.initial_invites:
                 if invite.uses > self.initial_invites[invite.code]:
-                    self.invite_data[invite.inviter.id] += 1
-                    self.initial_invites[invite.code] = invite.uses
+                    inviter_id = invite.inviter.id if invite.inviter else None
+                    if inviter_id:
+                        self.invite_data[inviter_id] += 1
+                        self.initial_invites[invite.code] = invite.uses
+                        # print(f"Updated invite count for {inviter_id}: {self.invite_data[inviter_id]}")
+                        matched = True
+                    else:
+                        print(f"Invite {invite.code} used, but inviter not found.")
                     break
+
+        # if not matched:
+        #     print(f"No matching invite found for new member: {member.name}")
 
 
 async def setup(bot: commands.Bot):
