@@ -1,22 +1,22 @@
 import discord
 from discord import app_commands, ButtonStyle
 from discord.ext import commands
-from discord.ui import View, Button
+from discord.ui import Modal, TextInput, View, Button
 import asyncio
 
-class ReactionRoleModal(discord.ui.Modal, title="Create Reaction Roles"):
+class ReactionRoleModal(Modal, title="Create Reaction Roles"):
     def __init__(self):
         super().__init__()
-        self.header_interaction= None
+        self.stop_collecting_event = asyncio.Event()  
+        self.pairs = {}
 
-        # Text input for title and description
-        self.title_input = discord.ui.TextInput(
+        self.title_input = TextInput(
             label="Reaction Roles Title",
             style=discord.TextStyle.short,
             placeholder="Enter the title for the embed...",
             max_length=250
         )
-        self.description_input = discord.ui.TextInput(
+        self.description_input = TextInput(
             label="Reaction Roles Description",
             style=discord.TextStyle.long,
             placeholder="Enter the description for reaction roles..."
@@ -25,194 +25,153 @@ class ReactionRoleModal(discord.ui.Modal, title="Create Reaction Roles"):
         self.add_item(self.description_input)
 
     async def on_submit(self, interaction: discord.Interaction):
-        # Store the description
         self.title = self.title_input.value
         self.description = self.description_input.value
         await self.collect_reaction_roles(interaction)
 
     async def collect_reaction_roles(self, interaction: discord.Interaction):
-        """Collects reaction role pairs from the user."""
-        pairs = {}  # Dictionary to store all the role-emoji pairs
-        stop_collecting = False  # Flag to stop collecting input
-
-        # View with finish button
+        """Collects reaction-role pairs from the user."""
         view = View()
-        finish_button = Button(style=ButtonStyle.success, label='Finish', custom_id='finish')
-        view.add_item(finish_button)
-        self.header_interaction= interaction
+        finish_button = Button(style=ButtonStyle.success, label="Finish")
 
-
-        # Finish Button callback
-        # Finish Button callback
-        async def finish_button_callback(interaction: discord.Interaction):
-            """Callback for when the finish button is clicked."""
-            nonlocal stop_collecting
-            nonlocal view
-
-            if not pairs:
-                await interaction.response.send_message("Please add at least one role-emoji pair before finishing.", ephemeral=True)
+        async def finish_button_callback(finish_interaction: discord.Interaction):
+            if not self.pairs:
+                await finish_interaction.response.send_message(
+                    "Please add at least one role-emoji pair before finishing.",
+                    ephemeral=True
+                )
                 return
-            
-            stop_collecting = True 
+
+            await finish_interaction.response.defer(ephemeral=True)
+
             embed = discord.Embed(
-                title=f"**{self.title}**",  # Bold the title
-                description=f"{self.description}\n\n" + '\n'.join(f"React with {emoji} for {role.mention} role" for emoji, role in pairs.items()),
-                color=discord.Color.green()  # Custom color for the embed
+                title=f"**{self.title}**",
+                description=f"{self.description}\n\n" +
+                            '\n'.join(f"React with {emoji} for {role.mention}" for emoji, role in self.pairs.items()),
+                color=discord.Color.green()
             )
-            embed.set_footer(text="Choose your role by reacting!", icon_url="https://cdn-icons-png.flaticon.com/512/5151/5151146.png")
+            embed.set_footer(text="React below to get your role!")
+            message = await finish_interaction.channel.send(embed=embed)
 
-            await interaction.response.send_message("Generating..", ephemeral=True)
+            for emoji in self.pairs.keys():
+                await message.add_reaction(emoji)
 
-            # Send the embed and store the message to access it later
-            embedded_msg = await interaction.channel.send(embed=embed)                   
-            for emoji in pairs.keys():  # Add reactions to the embed
-                await embedded_msg.add_reaction(emoji)
+            cog = finish_interaction.client.get_cog("ReactionRolesCog")
+            if cog:
+                cog.reaction_role_message_id = message.id
+                cog.reaction_role_pairs = self.pairs
 
-          
-            await interaction.delete_original_response()
-            await self.header_interaction.delete_original_response()
+            await finish_interaction.followup.send("Reaction roles setup complete!", ephemeral=True)
+            self.stop_collecting_event.set()  #Stop collection loop
+            view.stop() 
 
-            view.stop()  # Stop the view to prevent further interactions
-
-            # Store the message ID and the pairs for later role assignment
-            interaction.client.reaction_role_message_id = embedded_msg.id
-            interaction.client.reaction_role_pairs = pairs
-
-        # Assign callback
         finish_button.callback = finish_button_callback
+        view.add_item(finish_button)
 
         await interaction.response.send_message(
-            "Please input the role and emoji in the format: `@role emoji` (one pair per message). Example:\n@Member 😀\nClick 'Finish' when done.",
+            "Input role-emoji pairs as `@role emoji`. Click 'Finish' when done.",
             view=view,
             ephemeral=True
         )
 
-        while not stop_collecting:
+        while not self.stop_collecting_event.is_set():
+            if self.stop_collecting_event.is_set():
+                return
             try:
-                # Wait for the user's message or button click
                 user_input = await interaction.client.wait_for(
-                    'message',
+                    "message",
                     check=lambda m: m.author == interaction.user and m.channel == interaction.channel,
                     timeout=120
                 )
-                
-                # Split user input into role and emoji parts
+
                 content = user_input.content.strip().split()
                 if len(content) == 2:
                     role_mention, emoji = content
                     role = discord.utils.get(interaction.guild.roles, mention=role_mention)
 
                     if role:
-                        # Check if bot has 'manage_roles' permission
-                        bot_member = interaction.guild.get_member(interaction.client.user.id)
-                        if not bot_member.guild_permissions.manage_roles:
-                            await interaction.followup.send("I don't have permission to manage roles.", ephemeral=True)
+                        # Check if the bot can assign the role
+                        guild = interaction.guild
+                        bot_member = guild.me  # Bot's member object
+                        if bot_member.top_role.position <= role.position:
+                            await interaction.followup.send(
+                                f"Bot cannot assign the role {role.name} because it is higher than or equal to the bot's top role. "
+                                "Please update the role hierarchy or choose a different role.",
+                                ephemeral=True
+                            )
+                            continue
+                        if not guild.me.guild_permissions.manage_roles:
+                            await interaction.followup.send(
+                                "Bot does not have permission to manage roles. Please update the bot's permissions.",
+                                ephemeral=True
+                            )
                             continue
 
-                        # Check if the bot's top role is higher than the target role
-                        bot_top_role = bot_member.top_role
-                        if bot_top_role <= role:
-                            if not stop_collecting:
-                                await interaction.followup.send(
-                                    f"I can't assign the role {role_mention} because it is higher or equal to my highest role.",
-                                    ephemeral=True
-                                )
-                                await user_input.delete()
-                                continue
-
-                        # Check if the role is already assigned to an emoji 
-                        if role in pairs.values():
-                            # Reassign the role to the new emoji
-                            old_emoji = [key for key, val in pairs.items() if val == role][0]
-                            pairs.pop(old_emoji)  # Remove the old emoji assignment
-                            pairs[emoji] = role  # Add the new emoji assignment
-                            await interaction.followup.send(f"Updated: {role_mention} to new emoji {emoji}.", ephemeral=True)
-                            await user_input.delete()
-
-                        # Check if the emoji is already assigned to another role
-                        elif emoji in pairs.keys():
-                            await interaction.followup.send(f"The emoji {emoji} is already assigned to another role. Please choose a different emoji.", ephemeral=True)
-                            await user_input.delete()
-                        
-                        # Add the role-emoji pair if checks pass
+                        if role in self.pairs.values():
+                            await interaction.followup.send(f"Role {role.mention} is already assigned!", ephemeral=True)
+                        elif emoji in self.pairs:
+                            await interaction.followup.send(f"Emoji {emoji} is already in use!", ephemeral=True)
                         else:
-                            if not stop_collecting:
-                                pairs[emoji] = role
-                                await user_input.delete()
-                                await interaction.followup.send(f"Added: {role_mention} with {emoji}", ephemeral=True, )
-                                
-                            
+                            self.pairs[emoji] = role
+                            await interaction.followup.send(f"Added: {role.mention} -> {emoji}", ephemeral=True)
                     else:
-                        await user_input.delete()
-                        await interaction.followup.send("Invalid role mention. Please try again.", ephemeral=True)
+                        if not self.stop_collecting_event.is_set():
+                            await interaction.followup.send("Invalid role mention. Try again.", ephemeral=True)
                 else:
-                    await user_input.delete()
-                    await interaction.followup.send("Please provide input in the format `@role emoji`.", ephemeral=True)
+                    if not self.stop_collecting_event.is_set():
+                        await interaction.followup.send("Format: `@role emoji`. Try again.", ephemeral=True)
 
             except asyncio.TimeoutError:
-                if not stop_collecting:
-                    await interaction.followup.send("Time out! No input received. Please try again.", ephemeral=True)
-                    stop_collecting = True
-                    view.stop()
-                break
+                if not self.stop_collecting_event.is_set():
+                    await interaction.followup.send("Setup timed out. Reaction roles not saved.", ephemeral=True)
+                    break
+         
+            await asyncio.sleep(0) 
 
 
 
-@app_commands.command(name="reaction_roles", description="Set reaction roles on this channel")
-async def reaction(interaction: discord.Interaction):
-    role_modal = ReactionRoleModal()  # Startup modal with empty fields
-    await interaction.response.send_modal(role_modal)
-
-
-#Cog for Reaction Roles
 class ReactionRolesCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        #role pairs and embed msg id
-        self.bot.reaction_role_message_id = None
-        self.bot.reaction_role_pairs = {}
+        self.reaction_role_message_id = None
+        self.reaction_role_pairs = {}
+
+    reaction_roles_group = app_commands.Group(name="reaction", description="Reaction roles setup commands.")
+
+    @reaction_roles_group.command(name="roles", description="Set up reaction roles in this channel.")
+    async def reaction_roles(self, interaction: discord.Interaction):
+        modal = ReactionRoleModal()
+        await interaction.response.send_modal(modal)
 
     @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user: discord.User):
-        if user.bot:
-            return  
-        
-        # Check if the reaction is on the correct message
-        if reaction.message.id == self.bot.reaction_role_message_id:
-            # Get the role associated with  emoji
-            role = self.bot.reaction_role_pairs.get(str(reaction.emoji))           
-            # Ensure the role exists
-            if role:
-                # Get the member object for the user
-                guild = reaction.message.guild
-                member = guild.get_member(user.id)
-                if member:
-                    try:
-                        # Assign role 
-                        await member.add_roles(role)
-                    except Exception as e:
-                        print(f"Unassignable {e}")
-
-    @commands.Cog.listener()
-    async def on_reaction_remove(self, reaction, user: discord.User):
-        if user.bot:
+    async def on_reaction_add(self, reaction, user):
+        if user.bot or reaction.message.id != self.reaction_role_message_id:
             return
 
-        if reaction.message.id == self.bot.reaction_role_message_id:
-            role = self.bot.reaction_role_pairs.get(str(reaction.emoji))
+        role = self.reaction_role_pairs.get(str(reaction.emoji))
+        if role:
+            member = reaction.message.guild.get_member(user.id)
+            if member:
+                try:
+                    await member.add_roles(role)
+                except Exception as e:
+                    print(f"Failed to assign role: {e}")
 
-            if role:
-                guild = reaction.message.guild
-                member = guild.get_member(user.id)
-                if member:
-                    try:
-                        # Remove role
-                        await member.remove_roles(role)
-                    except Exception as e:
-                        print(f"Unable to remove role: {e}")
-         
+    @commands.Cog.listener()
+    async def on_reaction_remove(self, reaction, user):
+        if user.bot or reaction.message.id != self.reaction_role_message_id:
+            return
 
-    
-#Cog setup
+        role = self.reaction_role_pairs.get(str(reaction.emoji))
+        if role:
+            member = reaction.message.guild.get_member(user.id)
+            if member:
+                try:
+                    await member.remove_roles(role)
+                except Exception as e:
+                    print(f"Failed to remove role: {e}")
+
+
 async def setup(bot):
     await bot.add_cog(ReactionRolesCog(bot))
+

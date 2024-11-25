@@ -1,73 +1,89 @@
 from discord.ext import commands
+from discord import app_commands
 from langdetect import detect
 from deep_translator import GoogleTranslator
 import discord
 
-translate_channels= set()
+class TranslateCog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+        self.translate_channels = set()  # Tracks channels where translation is active
 
-def language_detector(text):
-    detected = detect(text)
-    return detected
+    def language_detector(self, text):
+        """Detects the language of the given text."""
+        return detect(text)
 
-def translate_to_english(text, target_language='en'):
-    translated = GoogleTranslator(source='auto', target=target_language).translate(text)
-    return translated
+    def translate_to_english(self, text, target_language='en'):
+        """Translates the given text to the target language."""
+        return GoogleTranslator(source='auto', target=target_language).translate(text)
 
-@commands.command(name="ttt", help="!ttt <text>")
-async def translate(ctx, *, message: str):
-    translated_Data = translate_to_english(message)
-    embed = discord.Embed(
-        title="Translation",
-        description=translated_Data,
-        color=discord.Color.green()  
-    )
-    await ctx.send(embed= embed)
+    # App command group for translation
+    translate_commands_group = app_commands.Group(name="translate", description="Manage translation in channels.")
 
-@commands.command(name="translate")
-async def start_translate(ctx):
-    global translate_channels
-    if(ctx.channel.id in translate_channels):
-        translate_channels.remove(ctx.channel.id)
+    @translate_commands_group.command(name="start", description="Start translating messages in this channel.")
+    async def start_translate(self, interaction: discord.Interaction):
+        """Start translating messages in the current channel."""
+        if interaction.channel_id in self.translate_channels:
+            await interaction.response.send_message(
+                embed=discord.Embed(
+                    title="Translation is already active in this channel!",
+                    color=discord.Color.yellow()
+                ),
+                ephemeral=True
+            )
+        else:
+            self.translate_channels.add(interaction.channel_id)
+            await interaction.response.send_message(
+                embed=discord.Embed(
+                    title="Translation session started!",
+                    color=discord.Color.green()
+                ),
+                ephemeral=True
+            )
 
-        #embed object
-        embed = discord.Embed(
-        title="Translation session stopped !!",
-        color=discord.Color.red()  
-        )
-        await ctx.send(embed= embed)
-    else:
-        translate_channels.add(ctx.channel.id)
-        embed = discord.Embed(
-        title="Translation session started !!",
-        color=discord.Color.green()  
-        )
-        await ctx.send(embed= embed)
+    @translate_commands_group.command(name="stop", description="Stop translating messages in this channel.")
+    async def stop_translate(self, interaction: discord.Interaction):
+        """Stop translating messages in the current channel."""
+        if interaction.channel_id in self.translate_channels:
+            self.translate_channels.remove(interaction.channel_id)
+            await interaction.response.send_message(
+                embed=discord.Embed(
+                    title="Translation session stopped!",
+                    color=discord.Color.red()
+                ),
+                ephemeral=True
+            )
+        else:
+            await interaction.response.send_message(
+                embed=discord.Embed(
+                    title="Translation is not active in this channel.",
+                    color=discord.Color.yellow()
+                ),
+                ephemeral=True
+            )
 
-
-#handler
-async def on_message_translate(message, bot):
-    global translate_channels
-
-    if message.channel.id in translate_channels:
-        if message.author.bot:
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        """Handles automatic translation of messages."""
+        if (
+            message.author.bot  # Ignore bot messages
+            or message.channel.id not in self.translate_channels  # Ignore non-translate channels
+        ):
             return
-        
-        if message.content.startswith('!'):        
-            return
 
-        
         try:
-            detected_lang = language_detector(message.content)
+            detected_lang = self.language_detector(message.content)
             if detected_lang != 'en':
-                translated_Data = translate_to_english(message.content)
-                embed = discord.Embed(
+                translated_data = self.translate_to_english(message.content)
+                await message.channel.send(embed=discord.Embed(
                     title="Translation",
-                    description=translated_Data,
-                    color=discord.Color.yellow()  
-                    )
-                await message.channel.send(embed=embed)
-            
+                    description=translated_data,
+                    color=discord.Color.blue()
+                ))
         except Exception as e:
-            print(f"Error detecting language: {e}")
+            print(f"Error detecting or translating message: {e}")
 
-        await bot.process_commands(message)
+# Setup function for the cog
+async def setup(bot: commands.Bot):
+    await bot.add_cog(TranslateCog(bot))
+

@@ -5,9 +5,10 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
 ## Features
 
 - **AI ChatBot**: Engage in conversations with an AI-powered chatbot for fun or assistance.
+- **Youtube Music**: Play any video as audio on your voice channels to spice up the fun.
 - **Translation**: Translate messages to various languages within the server to facilitate communication among members.
 - **Verification System**: Verify legitimate users through a CAPTCHA-based verification system.
-- **Welcome/Goodbye Messages**: Automatically send personalized welcome messages to new members and farewell messages when members leave.
+- **Welcome Messages**: Automatically send personalized welcome messages to new members.
 - **Polls**: Easily create polls to gather opinions from server members, with various customization options.
 - **Roles**: Quickly create, assign/unassign, edit and customise roles on the server.
 - **Tickets**: A ticketing system for handling user queries and issues efficiently, streamlining server support.
@@ -43,9 +44,34 @@ A feature-rich Discord bot designed to enhance server interactions and automate 
   - **Quiz**: Create fun quizzes and enjoy with your community in an instant.
   - **Hangman**: Play Hangman with a unique twist with your community.
   - **TicTacToe**: Quickly engage in a game of TicTac with your community or against the bot.
+- **System**:
+  -**Server Info**: Get information about your server.
+  -**User Info**: Get information about members in your server.
+  -**Role Info**: Get information about Roles in your server.
+
 
 ## Setup Instructions
 
 1. **Clone this repository**  
    ```bash
    git clone https://github.com/0101Yami0101/Discord-Bot.git
+
+
+## REQUIRED KEYS
+
+- DISCORD_TOKEN: Obtain this from your Discord Developer Portal.
+- FFMPEG_PATH: Ensure FFmpeg codec is properly installed on your system.
+- COHERE_KEY: Get your API key from Cohere.
+- QUOTES_KEY: Obtain your key from API Ninjas Quotes API.
+
+
+## Install the Required Dependencies
+
+Make sure you have Python 3.8+ installed. Then run:
+
+```bash
+pip install -r requirements.txt
+
+
+
+

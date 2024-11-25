@@ -3,7 +3,7 @@ import re
 from discord.ext import commands
 from Moderation import auto_mod_init
 from Moderation.auto_mod_init import userViolationCount
-from Moderation.manual.whitelist_links import white_listed_urls
+from system.whitelist import white_listed_urls
 
 # Regex patterns for detecting URLs and Discord invite links
 URL_REGEX = r'(https?://[^\s]+)'
