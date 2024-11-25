@@ -9,16 +9,11 @@ from system.groups import create_group, role_group, channel_group, raffle_group
 
 intents = discord.Intents.default()
 intents.guilds = True
-intents.members = True  # Required for accessing the member list
-intents.presences = True  # Helps ensure the bot appears in the member list
+intents.members = True  
+intents.presences = True  
 
 
-bot = commands.Bot(command_prefix='!', intents=intents)
-
-#Default type ( ! )
-# commands = []
-# for command in commands:
-#     bot.add_command(command)
+bot = commands.Bot(command_prefix='!', intents=intents) #Incase need to add default commands
 
 # App_commands (Slash commands)
 async def load_all_cogs():
