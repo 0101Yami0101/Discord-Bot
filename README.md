@@ -45,9 +45,9 @@ An advanced and multi-functional Discord bot aimed at boosting server interactio
   - **Hangman**: Play Hangman with a unique twist with your community.
   - **TicTacToe**: Quickly engage in a game of TicTac with your community or against the bot.
 - **System**:
-  -**Server Info**: Get information about your server.
-  -**User Info**: Get information about members in your server.
-  -**Role Info**: Get information about Roles in your server.
+  - **Server Info**: Get information about your server.
+  - **User Info**: Get information about members in your server.
+  - **Role Info**: Get information about Roles in your server.
 
 
 ## Setup Instructions
